@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Sharada Peeth I Interactive Sanatani learning quiz</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;min-height:100vh;background:linear-gradient(135deg,#FAF5FF 0%,#EFF6FF 50%,#ECFDF5 100%)}
+button{font-family:inherit}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useCallback}=React;
+const Q=(q,a,b,c,d,ans)=>({q,o:[a,b,c,d],a:ans});
+
+const ALL_TOPICS=[
+{n:"Hindu multiverse and the nature of time",qs:[
+Q("What cosmic action by Maha Vishnu creates universes, and what action dissolves them?","His sleep creates them; his waking dissolves them","His exhalation creates them; his inhalation dissolves them","His meditation creates them; his dance dissolves them","His speech creates them; his silence dissolves them",1),
+Q("Within each universe, what does Shiva represent, what does Vishnu represent, and what does Durga represent?","Shiva is space, Vishnu is time, and Durga is creation","Shiva is destruction, Vishnu is preservation, and Durga is creation","Shiva is time, Vishnu is space, and Durga is energy — the indestructible","Shiva is energy, Vishnu is space, and Durga is time",2),
+Q("How many lokas does each universe contain, and who presides over them?","7 lokas, presided over by Vishnu","14 lokas, presided over by Brahma","21 lokas, presided over by Shiva","14 lokas, presided over by Maha Vishnu",1),
+Q("Which loka do the Rakshasas, Gandharvas, and Yakshas reside in?","Swargaloka","Bhurloka","Bhuvarloka","Atala",2),
+Q("What are the four eternal Dhamas that lie beyond Vaikuntha?","Ayodhya Dhama, Mathura Dhama, Kashi Dhama, and Gokula Vrindavana Dhama","Ayodhya Dhama, Dwaraka Dhama, Mathura Dhama, and Gokula Vrindavana Dhama","Dwaraka Dhama, Mathura Dhama, Kashi Dhama, and Puri Dhama","Ayodhya Dhama, Dwaraka Dhama, Puri Dhama, and Gokula Vrindavana Dhama",1),
+Q("In Gokula Vrindavana Dhama, Maha Vishnu in his highest state unites with whom?","Parvati","Lakshmi","Swarupa Shakti — Radha","Durga",2),
+Q("From which loka does the soul's journey beyond the Karana Sagar begin, irrespective of which loka the soul resides in?","Satyaloka","Swargaloka","Bhuvarloka","Bhurloka",3),
+]},
+{n:"Our universe, our Brahma, and our manifestations",qs:[
+Q("How many kalpas does one Brahma year contain?","360","720","1,000","432",1),
+Q("One kalpa equals how many human years?","4.32 million","4.32 billion","432 million","43.2 billion",1),
+Q("How many manvantaras make up one kalpa?","7","12","14","21",2),
+Q("What is the duration of the Kali Yuga in human years?","864,000 years","1.296 million years","432,000 years","1.728 million years",2),
+Q("What date marks the beginning of the Kali Yuga, and what event does it correspond to?","18th February 3102 BC — Krishna's birth","18th February 3102 BC — Krishna leaving his mortal body","14th January 3102 BC — the end of the Kurukshetra War","18th February 3102 BC — the Pandavas' final journey",1),
+Q("As per Brahma's watch, what percentage of the current kalpa is over, and what time does his watch read?","51.23% — 12:15 PM","49.59% — 11:57 AM","50.00% — 12:00 PM","48.72% — 11:42 AM",1),
+]},
+{n:"Vaivasvata Manu — our Manu",qs:[
+Q("Vaivasvata Manu was born to which parents?","Kashyapa and Aditi","Brahma and Saraswati","Vivasvan and Sanjana","Surya and Chhaya",2),
+Q("Why did Sanjana leave her shadow Chhaya in her place?","She was performing tapasya in the forest","She was cursed by Brahma to wander the Earth","Unable to bear Vivasvan's radiance","She went to serve the Saptarishis",2),
+Q("Which of the following is NOT a child of Vivasvan through Chhaya?","Shani","Yama","Savarni","Tapti",1),
+Q("Who did Vaivasvata Manu marry, and which of the following were his children?","He married Shraddha; his children include Ikshvaku and Ila","He married Sanjana; his children include Yama and Ikshvaku","He married Shraddha; his children include Budha and Ila","He married Aditi; his children include Ikshvaku and Bharata",0),
+Q("Which avatara of Vishnu saved Vaivasvata Manu during the great deluge?","Kurma","Varaha","Vamana","Matsya",3),
+]},
+{n:"Savarni Manu — the next Manu",qs:[
+Q("Savarni Manu is the son of Vivasvan and which mother?","Sanjana","Chhaya","Shraddha","Aditi",1),
+Q("Savarni Manu will preside over which manvantara?","The seventh — the Vaivasvata Manvantara","The ninth — the Daksha Manvantara","The eighth — the Savarni Manvantara","The sixth — the Chakshusha Manvantara",2),
+Q("Which of the following will be among the Saptarishis of the Savarni Manvantara?","Bharadvaja, Gautama, Parashurama, and Vyasa","Ashwatthama, Kripacharya, Parashurama, and Vyasa","Kashyapa, Vashishtha, Parashurama, and Vyasa","Ashwatthama, Kripacharya, Bharadvaja, and Vyasa",1),
+]},
+{n:"The Saptarishis",qs:[
+Q("The Saptarishis are described as what in relation to Brahma?","Avatars of Brahma","Mind-born sons of Brahma, or Manasputras","Physical sons of Brahma born from his limbs","Adopted children of Brahma",1),
+Q("The seven stars of which constellation represent the Saptarishis?","Orion","Ursa Minor","Ursa Major","Cassiopeia",2),
+Q("Which of the following is the correct set of Saptarishis for the 7th manvantara, the Vaivasvata Manvantara?","Angirasa, Atri, Kratu, Marichi, Pulaha, Pulastya, and Vashishtha","Atri, Bharadvaja, Gautama, Jamadagni, Kashyapa, Vashishtha, and Vishvamitra","Atri, Angirasa, Gautama, Jamadagni, Kashyapa, Vashishtha, and Vishvamitra","Atri, Bharadvaja, Gautama, Jamadagni, Marichi, Vashishtha, and Vishvamitra",1),
+]},
+{n:"Narada Muni",qs:[
+Q("In a previous life, Narada was the son of whom?","A wandering rishi","A dasi — a maidservant — who served wandering rishis","A Brahmana priest in Vashishtha's ashram","A Kshatriya raja who renounced his kingdom",1),
+Q("What is the name of Narada's veena?","Saraswati","Kinnari","Mahati","Rudra",2),
+Q("Why did Daksha curse Narada, and what was the curse?","For stealing Kamadhenu — cursed to live as a mortal","For insulting Brahma — cursed to lose his memory","For convincing Daksha's sons to renounce worldly life and pursue moksha — cursed to never remain in one place","For disturbing Daksha's yagna — cursed to never play his veena again",2),
+Q("Narada informed Kansa of which prophecy?","That Vasudeva would overthrow his kingdom","That Devaki's eighth son would kill him","That Krishna would steal his throne in Mathura","That Ugrasena would escape and reclaim his throne",1),
+Q("Daksha is described in the text as what in relation to Brahma?","A Manasputra and one of the Saptarishis","A Prajapati — a progenitor born of Brahma","A physical son born from Brahma's forehead","An adopted son of Brahma and Saraswati",1),
+]},
+{n:"Kakbhushundi",qs:[
+Q("Where does Kakbhushundi reside to remain unaffected by the dissolution of universes?","Satyaloka","Kailash Parvat","Nilgiri Parvat","Vaikuntha",2),
+Q("What are the specific counts of the Ramayana and Mahabharata witnessed by Kakbhushundi across cosmic cycles?","7 times and 12 times","11 times and 16 times","10 times and 15 times","21 times and 28 times",1),
+Q("Who was the teacher of Kakbhushundi, described as a Manasputra of Brahma who mastered longevity?","Narada Muni","Lomasa","Vashishtha","Durvasa",1),
+Q("Which deity granted Kakbhushundi immortality and the ability to travel across space and time?","Shiva","Brahma","Lomasa","Rama",3),
+]},
+{n:"Brahma's ego, humility, and Bhairava",qs:[
+Q("When Brahma visited Vaikuntha believing he was the sole creator, what did the gatekeepers ask?","What is your purpose?","Which Brahma are you?","Do you have Vishnu's permission?","How many heads do you possess?",1),
+Q("What did Brahma see inside Vaikuntha that destroyed his ego?","Vishnu creating and dissolving universes","Countless other Brahmas — with 10, 100, and even 1,000 heads — from parallel universes","Shiva seated above Brahma's throne","A mirror showing all his past failures",1),
+Q("Why did Shiva create Bhairava?","To guard the gates of Kashi","Because Brahma's fourth head mocked Shiva","To destroy a demon terrorising the Devas","To punish Vishnu for claiming supremacy",1),
+Q("Where did the skull stuck to Bhairava's hand finally fall off, and what is Bhairava's role there?","Varanasi — where Bhairava remains as the river's guardian","Prayagraj — where Bhairava guards the confluence","Kashi — where Bhairava remains as the city's spiritual guardian","Haridwar — where Bhairava guards the ghats",2),
+]},
+{n:"Kirtimukha",qs:[
+Q("From which part of Shiva’s body was Kirtimukha born?","His hair","His third eye","His throat","His heart",1),
+Q("Who was the messenger of Jalandhara that Kirtimukha was originally created to consume?","Rahu","Ketu","Ravana","Bhasmasura",0),
+Q("What did Shiva command Kirtimukha to do when Rahu was granted mercy and no prey remained?","To guard the gates of Kailash Parvat","To return to the Karana Sagar","To consume its own body","To wait for the next yuga",2),
+]},
+{n:"Daksha, Sati, and the Shakti Peeths",qs:[
+Q("Sati was a mortal birth of whom?","Parvati","Lakshmi","Durga — the universe-level manifestation of the divine feminine","Saraswati",2),
+Q("Why did Daksha disapprove of Sati's marriage to Shiva?","Shiva had cursed Daksha in a previous life","Daksha considered Shiva an ash-smeared ascetic unworthy of his lineage","Shiva refused to attend Daksha's earlier yagna","Daksha believed only Vishnu was worthy of his daughter",1),
+Q("When Sati immolated herself and Shiva began the Tandava, what did Vishnu send to stop the destruction?","The Pashupatastra","Garuda","The Sudarshana Chakra","The Narayanastra",2),
+Q("Into how many pieces was Sati's body dismembered, and what did each site become?","Fifty-one pieces; each site became a Shakti Peeth","One hundred and eight pieces; each site became a Jyotirlinga","Fifty-one pieces; each site became a Jyotirlinga","Thirty-six pieces; each site became a Shakti Peeth",0),
+Q("Which of the following is NOT listed as one of the most revered Shakti Peeths?","Kamakhya in present-day Assam","Kalighat in present-day Kolkata","Vaishno Devi in present-day Jammu","Hinglaj in present-day Balochistan",2),
+Q("After Shiva destroyed Daksha's yagna and beheaded him, how was Daksha restored?","Vishnu used the Sudarshana Chakra to revive him with his original head","Shiva relented and restored Daksha to life with the head of a goat","Brahma intervened and gave Daksha a new body","The Devas performed a yagna to bring Daksha back with the head of a ram",1),
+Q("Sati was later reborn as Parvati. Who were Parvati's parents?","Vishwakarma and Sanjana","Daksha and Prasuti","Himavan — the king of the Himalayas — and his wife Mena","Kashyapa and Aditi",2),
+]},
+{n:"The Samudra Manthan",qs:[
+Q("Why did Durvasa curse the Devas to lose their strength?","Indra refused to offer Durvasa a seat at his court","Indra disrespected a divine garland by giving it to his elephant Airavata, who trampled it","The Devas failed to invite Durvasa to their assembly","Indra mocked Durvasa's appearance",1),
+Q("What was used as the churning rod, and who supported it?","Meru Parvat, supported by Kurma","Mandara Parvat, supported by Vishnu in the form of Kurma","Mandara Parvat, supported by Vishnu in the form of Varaha","Kailash Parvat, supported by Shiva",1),
+Q("Who was used as the rope for the churning?","Shesha, king of the Nagas","Takshaka, king of the Nagas","Vasuki, king of the Nagas","Ananta, the infinite serpent",2),
+Q("What emerged first from the churning, and who consumed it?","Amrit emerged first; the Devas consumed it","Kamadhenu emerged first; Vashishtha claimed her","Halahala — a deadly poison — emerged first; Shiva drank it","Lakshmi emerged first; Vishnu received her",2),
+Q("Which name did Shiva earn after drinking the halahala?","Mahadeva","Rudra","Neelakantha","Pashupati",2),
+Q("Which of the following items emerged from the churning and was taken by Shiva?","Kaustubha Mani","Kalpavriksha","Chandra","Panchajanya",2),
+Q("Dhanvantari is described as what in the text?","The divine warrior carrying Indra's weapons","The divine vaidya carrying the pot of amrit","The divine architect who built the churning apparatus","The divine musician who played during the churning",1),
+Q("How did Vishnu ensure only the Devas drank the amrit?","He created a barrier between the Devas and Asuras","He disguised himself as Mohini — a celestial enchantress — to trick the Asuras","He poisoned the Asuras' share of the amrit","He ordered Indra to distribute it exclusively to the Devas",1),
+]},
+{n:"Ayyappa and the slaying of Mahishi",qs:[
+Q("Mahishi received a boon that she could only be killed by whom?","The combined power of all three — Brahma, Vishnu, and Shiva","The son of Shiva and Vishnu","A woman warrior born of fire","The son of Indra and Parvati",1),
+Q("How was Ayyappa born?","Shiva and Parvati performed a yagna to create him","Shiva, enchanted by Vishnu's Mohini form during the Samudra Manthan, united with her","Vishnu placed his energy in Shiva's trident, which then produced the child","Brahma created him from the cosmic ocean",1),
+Q("Where was the child found, and by whom?","On the banks of the Kaveri River by the Chola king","On the banks of the Pampa River in present-day Kerala by the Pandalam Raja","In the forests of Madurai by a wandering sage","On the banks of the Godavari River by the Chalukya king",1),
+Q("Why did the queen conspire to remove Manikandan by sending him for tigress's milk?","She feared his divine powers","She wanted her biological son to inherit the throne","She was instructed by an Asura to do so","She feared Manikandan was a Rakshasa in disguise",1),
+Q("What did Manikandan ask for instead of the kingdom offered by the Pandalam Raja?","A golden throne in the palace","That a temple be built where his arrow landed","To be made the commander of the king's armies","A forest kingdom of his own",1),
+Q("Where did Manikandan's arrow land, and what title did he assume?","It struck the hilltop of Sabarimala; he assumed his yogic seat as Dharma Shasta — a Naishtika Brahmachari, an eternal celibate","It struck the banks of the Pampa River; he became the guardian deity of Kerala","It struck the peak of the Western Ghats; he became Dharma Raja","It struck the temple of Pandalam; he became Hariharaputra",0),
+]},
+{n:"Gayasura and the sacred land of Gaya",qs:[
+Q("Why did the Devas grow alarmed by Gayasura's piety?","His tapasya generated weapons that threatened Swarga","Any being who touched his body was absolved of all sins and granted moksha, threatening the cosmic order of karma and rebirth","He was amassing an army of liberated souls","His piety caused the rivers to dry and the crops to fail",1),
+Q("What condition did Gayasura set when agreeing to the yagna on his body?","The yagna must be completed in a single day","No Deva could leave until the yagna ended","If he stirred because the yagna was incomplete, the ritual would be void","Only Vishnu could touch his body during the ritual",2),
+Q("What did Vishnu place on Gayasura's chest to hold him in place?","His Sudarshana Chakra and then his hand","His conch Panchajanya and then his foot","His gada — his mace — and then his foot","His lotus and then his gada",2),
+Q("What boon did Vishnu grant Gayasura, and what city marks the spot?","The land would become the holiest site for Surya worship; the city is Varanasi","The land would become the most sacred site for pind daan — offerings to liberate the souls of deceased ancestors; the city is Gaya, present-day Bihar","The land would become the centre of Vedic learning; the city is Prayagraj","The land would become the most sacred site for pind daan; the city is Bodh Gaya, present-day Bihar",1),
+]},
+{n:"Jaya, Vijaya, and the three births",qs:[
+Q("Who were Jaya and Vijaya?","The twin sons of Vishnu and Lakshmi","The twin gatekeepers of Vaikuntha","The twin warriors who fought for the Devas","The twin brothers who served as Brahma's messengers",1),
+Q("Who cursed Jaya and Vijaya, and why?","Shiva cursed them for blocking the Saptarishis from entering Kailash Parvat","The four Kumaras — Manasputras and celibate yogis devoted to Vishnu — cursed them for blocking their entry to meet Vishnu","Narada cursed them for insulting him at the gates","Brahma cursed them for neglecting their duties as gatekeepers",1),
+Q("What choice did Vishnu offer Jaya and Vijaya, and what did they choose?","Seven births as Devas or three births as Asuras; they chose three births as Asuras","Seven births as his devotees or three births as his enemies; they chose three births as enemies","Ten births as mortals or one birth as a Rakshasa; they chose one birth","Five births as sages or two births as warriors; they chose two births as warriors",1),
+]},
+{n:"Hiranyaksha and Hiranyakashipu",qs:[
+Q("Who was the guru of the Asuras who guided Hiranyaksha and Hiranyakashipu?","Brihaspati","Shukracharya","Dronacharya","Vashishtha",1),
+Q("Why did Hiranyaksha drag the Earth to the bottom of the cosmic ocean?","To drown the mortals who worshipped Vishnu","Hoping to summon Vishnu","To hide it from the other Asuras","To use it as a bargaining chip with Brahma",1),
+Q("What was Hiranyakashipu's boon from Brahma regarding the conditions of his death?","Death neither by man nor beast, neither indoors nor outdoors, neither day nor night, neither on ground nor in air, and neither by handheld weapon nor projectile","Death only by Vishnu himself, in a direct battle, during the Satya Yuga","Immortality except against a weapon forged by Vishwakarma","Death neither by Deva nor Asura, neither by fire nor water",0),
+Q("Who was Holika, and what happened during her attempt to kill Prahlada?","Holika was Hiranyakashipu's wife; she tried to poison Prahlada but the poison turned to nectar","Holika was Hiranyakashipu's sister; she had a fireproof shawl but the shawl flew off her and covered Prahlada, burning her instead","Holika was Hiranyakashipu's daughter; she challenged Prahlada to a duel and was struck by lightning","Holika was a Rakshasi ally; she set fire to the palace but Prahlada was saved by Narada",1),
+Q("How did Narasimha honour every condition of Hiranyakashipu's boon?","He appeared from the sky at dawn, held Hiranyakashipu over water, and used a divine weapon","He appeared from a pillar, placed Hiranyakashipu on his thighs, on the threshold, at twilight, and disembowelled him","He appeared in the forest at midnight, suspended Hiranyakashipu between two trees, and used his teeth","He appeared in a cave, placed Hiranyakashipu on a rock at noon, and struck him with his tail",1),
+Q("After Narasimha killed Hiranyakashipu, who calmed him, and in what form?","Vishnu appeared as Mohini to distract him","Brahma appeared and sang hymns to pacify him","Parvati appeared as Durga to subdue him","Shiva manifested as Sharabha — part-lion, part-bird, and part-human — to overpower and calm him",3),
+Q("Holika's fireproof shawl was a boon from whom?","Shiva","Vishnu","Brahma","Agni",2),
+]},
+{n:"Ravana and Kumbhakarna",qs:[
+Q("Under which lineage is the story of Ravana and Kumbhakarna told?","The lineage of Angirasa","The lineage of Bhrigu","The lineage of Pulastya","The lineage of Kashyapa",2),
+]},
+{n:"Shishupala and Dantavakra",qs:[
+Q("Shishupala was born with what abnormalities, and how were they removed?","Born with six fingers and a tail; they vanished when Vishnu blessed him","Born with three eyes and four arms; the touch of the person destined to kill him — Krishna — rid him of them","Born blind and deaf; Narada's chant restored his senses","Born with three heads; Shiva reduced them to one",1),
+Q("How many insults did Krishna promise Shishupala's mother he would forgive before taking his life?","50","108","100","77",2),
+Q("At which event did Shishupala exhaust the 100-insult limit, and why was he enraged?","At Draupadi's swayamvara — because Krishna won the competition","At Yudhishthira's Rajasuya Yagna — because Krishna received the first honour","At Balarama's coronation — because Shishupala was not invited","At Krishna's wedding to Rukmini — because Shishupala was defeated in combat",1),
+Q("Who was Rukmini's eldest brother, and who was her father?","Her eldest brother was Rukmi; her father was Bhishmaka, ruler of the Vidarbha Kingdom, present-day Maharashtra","Her eldest brother was Jarasandha; her father was Bhishmaka of Magadha","Her eldest brother was Rukmi; her father was Drupada, ruler of Panchala","Her eldest brother was Shishupala; her father was Bhishmaka of Chedi",0),
+Q("Shishupala ruled which kingdom?","The Anga Kingdom, present-day Bihar","The Vidarbha Kingdom, present-day Maharashtra","The Chedi Kingdom, present-day Madhya Pradesh","The Karusha Kingdom, present-day Chhattisgarh",2),
+Q("Dantavakra ruled which kingdom?","The Chedi Kingdom","The Magadha Kingdom","The Gandhara Kingdom","The Karusha Kingdom",3),
+]},
+{n:"Nara-Narayana and the slaying of Sahasra Kavacha",qs:[
+Q("Who were the parents of the twin sages Nara and Narayana?","Brahma and Saraswati","Kashyapa and Aditi","Manasputra Dharma and Daksha’s daughter Murti","Vashishtha and Arundhati",2),
+Q("What unique strategy did Nara and Narayana use to destroy Sahasra Kavacha’s armours?","They shared a single soul","Alternating tapasya and combat to revive each other","They used the Sudarshana Chakra","They invoked the power of Adi Para Shakti",1),
+Q("In the Dvapara Yuga, who were the reincarnations of Nara and Narayana born to complete the task of killing Sahasra Kavacha?","Bhishma and Drona","Nakula and Sahadeva","Arjuna and Krishna","Yudhisthira and Vidura",2),
+]},
+{n:"Bali and Vamana",qs:[
+Q("Bali was the grandson of whom?","Hiranyaksha","Hiranyakashipu","Prahlada","Shukracharya",2),
+Q("What did Vamana — a dwarf Brahmana — ask Bali for?","All the wealth in Bali's treasury","Three paces of land","Dominion over Patala","Kamadhenu and the Kalpavriksha",1),
+Q("When Vamana grew to cosmic size, one step covered Bhumi and the second covered Swarga and Patala. What did Bali offer for the third step?","His most prized weapon","His kingdom of Lanka","His own head","His army of Asuras",2),
+Q("What status did Vamana grant Bali, and what is his future destiny?","Chiranjeevi — immortal — status, destined to return as Indra in a future era","Moksha — liberation from the cycle of rebirth","Kingship over Patala for eternity","A seat among the Saptarishis of the next manvantara",0),
+]},
+{n:"Vishnu's avataras across the yugas",qs:[
+Q("Which avataras manifested in the Satya Yuga?","Matsya, Kurma, Vamana, and Narasimha","Matsya, Kurma, Varaha, and Narasimha","Matsya, Varaha, Parashurama, and Narasimha","Kurma, Varaha, Narasimha, and Rama",1),
+Q("Which avataras manifested in the Treta Yuga?","Parashurama, Rama, and Krishna","Vamana, Parashurama, and Rama","Vamana, Rama, and Balarama","Parashurama, Rama, and Balarama",1),
+Q("In the Dvapara Yuga, which avataras manifested?","Krishna and Kalki","Balarama and Krishna","Rama and Krishna","Parashurama and Balarama",1),
+Q("Who will Kalki be supported by in the Kali Yuga?","The Saptarishis of the current manvantara","The Chiranjeevis — Bali, Parashurama, Vibhishana, Hanuman, Vyasa, Kripacharya, and Ashwatthama","The Pandavas reborn in new bodies","The Devas led by Indra",1),
+]},
+{n:"Parashurama",qs:[
+Q("Parashurama was born as a Brahmana to whom?","Vashishtha","Kashyapa","Jamadagni","Bharadvaja",2),
+Q("Why did Parashurama kill Kartavirya?","Kartavirya insulted Parashurama's guru","Kartavirya stole Kamadhenu from Jamadagni","Kartavirya killed Parashurama's mother","Kartavirya attacked Parashurama's ashram with an army",1),
+Q("How many generations of Kshatriyas did Parashurama kill, and why that specific number?","Fourteen generations — one for each loka","Twenty-one generations — because Renuka, his mother, beat her chest twenty-one times in agony","Seven generations — one for each Saptarishi","Twelve generations — matching the twelve Adityas",1),
+Q("Which two warriors did Parashurama teach?","Arjuna and Karna","Drona and Arjuna","Bhishma and Karna","Bhishma and Drona",2),
+]},
+{n:"Rishi lineage — Angirasa",qs:[
+Q("Angirasa fathered which two notable figures?","Kashyapa and Bharadvaja","Brihaspati, guru of the Devas, and Gautama","Shukracharya and Brihaspati","Vashishtha and Vishvamitra",1),
+Q("Brihaspati and his wife Tara had which son?","Kacha","Gautama","Bharadvaja","Narada",2),
+Q("Angirasa and Bhrigu were rivals. Bhrigu's line produced Shukracharya, guru of the Asuras. What did Angirasa's line produce?","Vashishtha, rajpurohit of the Suryavanshis","Kashyapa, father of the Devas and Asuras","Brihaspati, guru of the Devas","Vishvamitra, drashta of the Gayatri Mantra",2),
+Q("When Kanva took samadhi, what happened, and what was ultimately created from it?","A river formed around him and Vishwakarma used its water to forge divine weapons","An anthill grew over him and a divine bamboo grew from the Earth above; Brahma gave the bamboo to Vishwakarma, who used it to create two divine dhanushas","A divine tree grew from his body and its branches became the bows of the Devas","A golden lotus bloomed above him, from which Vishwakarma forged the Sudarshana Chakra",1),
+]},
+{n:"Kacha and Shukracharya",qs:[
+Q("Why did the Devas send Kacha to Shukracharya?","To assassinate Shukracharya in his sleep","To spy on the Asuras' military plans","To learn the Mrita Sanjivani Mantra — a chant to revive the dead","To negotiate a peace treaty with the Asuras",2),
+Q("Why did Shukracharya keep reviving Kacha after the Asuras killed him?","Because Brahma ordered him to protect all students","Because his daughter Devayani loved Kacha","Because the Mrita Sanjivani Mantra required a living subject","Because Kacha was secretly his son from a previous life",1),
+Q("How did the Asuras finally ensure Kacha could not be revived easily?","They burned his body, scattered the ashes across the ocean","They killed Kacha, burnt his body, and mixed the ashes into Shukracharya's wine","They sealed Kacha's body in an unbreakable divine cage","They fed his body to a divine serpent",1),
+Q("Why did Kacha refuse to marry Devayani?","He had taken a vow of celibacy as a Brahmachari","He argued they were now siblings since both came from her father","He was already betrothed to an Apsara in Swarga","He feared Shukracharya would curse him",1),
+]},
+{n:"Bharadvaja, Dronacharya, and Ashwatthama",qs:[
+Q("Dronacharya married whom, and who was their son?","Kripi, sister of Kripacharya; their son was Ashwatthama","Devayani, daughter of Shukracharya; their son was Ashwatthama","Kripi, daughter of Bharadvaja; their son was Dhrishtadyumna","Tara, wife of Brihaspati; their son was Kacha",0),
+Q("Which three individuals did Bharadvaja teach?","Dronacharya, Kripacharya, and Bhishma","Dronacharya, Drupada, and Bhishma","Dronacharya, Parashurama, and Arjuna","Dronacharya, Drupada, and Arjuna",1),
+]},
+{n:"Rishi lineage — Bhrigu",qs:[
+Q("Through which line was Parashurama a descendant of Bhrigu?","Through Shukracharya","Through Jamadagni — a different line from Shukracharya","Through Brihaspati","Through Bharadvaja",1),
+Q("Bhrigu fathered which guru?","Brihaspati, guru of the Devas","Dronacharya, guru of the Pandavas","Vashishtha, rajpurohit of the Suryavanshis","Shukracharya, guru of the Asuras",3),
+]},
+{n:"The Pinaka Dhanusha",qs:[
+Q("Who gave the Pinaka Dhanusha to Janak of Mithila?","Vishwakarma","Shiva","Parashurama","Brahma",2),
+Q("The Pinaka Dhanusha was created by Vishwakarma for Shiva to defeat whom?","Hiranyakashipu in his celestial fortress","The three Tarakasuras of Tripura — three floating celestial cities of iron, gold, and silver","Ravana in Lanka","Andhaka, the blind Asura",1),
+Q("In the arrow used to destroy Tripura, what role did each entity play?","Vishnu as the arrow, Vayu as the tail, Agni as the tip, and Vasuki as the string","Agni as the arrow, Vishnu as the tail, Vayu as the tip, and Shesha as the string","Shiva as the arrow, Brahma as the tail, Vishnu as the tip, and Vasuki as the string","Vishnu as the arrow, Indra as the tail, Surya as the tip, and Vasuki as the string",0),
+]},
+{n:"Sita and the Pinaka Dhanusha",qs:[
+Q("How was Sita found?","She was born from a lotus in the Ksheer Sagar","She was found by Janak and his wife Sunaina in a field","She descended from the heavens in a golden chariot","She was born from the flames of a sacred yagna",1),
+Q("Why was Sita not born from a womb?","Because Lakshmi chose to manifest directly","Because Ravana controlled the grahas — celestial bodies governing fate — so the Devas ensured she was not born from a womb but rose from the soil","Because Brahma decreed that all avataras of Lakshmi must emerge from the Earth","Because Janak performed a yagna that brought her from the underworld",1),
+Q("What did Sita know about the golden deer, and why did she send Rama after it?","She believed it was a divine gift from Indra and wanted it as a pet","She knew no golden deer existed, yet sent Rama after it — setting in motion the war with Ravana","She thought it was a test from Shiva and wanted Rama to prove his skill","She did not know it was false and was genuinely enchanted",1),
+Q("Who was Urmila, and whom did she marry?","Urmila was Sita's cousin; she married Bharata","Urmila was Janak and Sunaina's daughter; she married Lakshmana","Urmila was Sita's sister found in the same field; she married Shatrughna","Urmila was Sunaina's niece; she married Lakshmana",1),
+]},
+{n:"Other divine dhanushas",qs:[
+Q("Parashurama gave the Vijaya Dhanusha to whom?","Arjuna, son of Indra","Bhishma, son of Shantanu","Karna, son of Surya","Drona, son of Bharadvaja",2),
+Q("The Gandiva was originally whose dhanusha, and who received it?","Shiva's dhanusha, given to Rama","Vishnu's dhanusha, given to Bhishma","Brahma's dhanusha, given to Arjuna, son of Indra, by Indra","Indra's dhanusha, given to Arjuna directly",2),
+]},
+{n:"Rishi lineage — Atri",qs:[
+Q("Atri, founder of the Atreya Gotra, fathered which two notable figures?","Agastya and Bharadvaja","Chandra and Durvasa — a manifestation of Shiva","Kashyapa and Marichi","Brihaspati and Vishvamitra",1),
+Q("What did Chandra found?","The Suryavanshi Dynasty","The Kaurava Dynasty","The Chandravanshi Dynasty","The Yadava Dynasty",2),
+]},
+{n:"Rishi lineage — Pulastya (the lineage of Ravana)",qs:[
+Q("Vishrava had two lines through two wives. Through Ilavida, daughter of Bharadvaja, who was his son?","Ravana","Kumbhakarna","Kubera, the original ruler of Lanka","Vibhishana",2),
+Q("Why did Vishrava warn that his children through Kaikesi would have fierce temperaments?","Because Kaikesi was an Asura princess under a curse","Because Kaikesi approached him at twilight — an unholy hour","Because Kaikesi had performed dark tapasya before marriage","Because the stars were in a malevolent alignment at the time",1),
+Q("Why was Vibhishana born pious, unlike his brothers Ravana and Kumbhakarna?","Because Vishrava performed a special yagna before his birth","Because Kaikesi repented during her final pregnancy","Because Brahma blessed the child while still in the womb","Because Vibhishana was secretly fathered by a rishi",1),
+Q("What did Ravana take from his half-brother Kubera after overthrowing him?","Kubera's crown and his divine treasury","Lanka and the Pushpaka Vimana — a flying chariot","The Ksheer Sagar and the divine conch","Lanka and Kubera's golden mace",1),
+Q("Surpanakha was the daughter of Vishrava and Kaikesi. She was the sister of which of the following?","Kubera and Vibhishana","Ravana, Kumbhakarna, and Vibhishana","Ravana and Kubera","Ravana, Kumbhakarna, and Kubera",1),
+]},
+{n:"Indrajit and the birth of Rama's mission",qs:[
+Q("Indrajit was the son of Ravana and whom?","Surpanakha","Kaikesi","Mandodari, daughter of Mayasura the Asura architect","Tara, queen of the Vanaras",2),
+Q("Indrajit possessed divya astras and had once defeated whom?","Brahma","Shiva","Vishnu","Indra",3),
+Q("Why did the Devas ensure Sita emerged from the ground rather than being born from a womb?","Because a child of the soil would be immune to Ravana's weapons","Because Ravana controlled the grahas, so they ensured she was not born under his influence","Because only an Earth-born being could enter Lanka","Because Vishnu decreed that Lakshmi must always emerge from the Earth",1),
+]},
+{n:"Rishi lineages — Pulaha, Kratu, Marichi, and Vashishtha",qs:[
+Q("Pulaha fathered Kardama, who fathered whom?","Agastya","Vishvamitra","Kapila","Kanva",2),
+Q("Marichi fathered Kashyapa. Through which wife did Kashyapa father the Devas?","Diti","Kadru","Vinata","Aditi",3),
+Q("Through which wife did Kashyapa father the Asuras?","Aditi","Diti","Vinata","Kadru",1),
+]},
+{n:"The Suryavanshi Dynasty",qs:[
+Q("Who founded the Suryavanshi Dynasty?","Vaivasvata Manu","Ikshvaku, son of Vaivasvata Manu","Vivasvan, the presiding deity of the Sun","Harishchandra, the truthful king",1),
+Q("Which of the following is the correct order of notable Suryavanshi rulers mentioned in the text?","Harishchandra, Bhagiratha, Raghu, Dasharatha, Rama","Raghu, Harishchandra, Bhagiratha, Dasharatha, Rama","Bhagiratha, Raghu, Harishchandra, Dasharatha, Rama","Ikshvaku, Raghu, Bhagiratha, Harishchandra, Dasharatha",0),
+]},
+{n:"Sagara, Kapila, and the 60,000 sons",qs:[
+Q("What yagna did Sagara perform, and who stole the sacrificial horse?","The Rajasuya Yagna; Shukracharya stole the horse","The Ashvamedha Yagna; Indra stole the sacrificial horse","The Putrakameshti Yagna; Ravana stole the horse","The Ashvamedha Yagna; Narada stole the sacrificial horse",1),
+Q("What happened when Sagara's 60,000 sons found the horse near Kapila's ashram?","Kapila welcomed them and returned the horse peacefully","They praised Kapila and asked for his blessing","Thinking Kapila was the thief, they insulted him; Kapila opened his eyes and his tejas turned all 60,000 into ash","They attacked Kapila, who used a divya astra to scatter them",2),
+Q("What did Sagara's 60,000 sons create while digging the Earth searching for the horse?","Mountains","Rivers","The oceans — sagara","Caves leading to Patala",2),
+Q("How many generations did it take to liberate the 60,000 souls?","Three generations — Sagara, Anshuman, and Bhagiratha","Four generations — Sagara, Anshuman, Dilipa, and Bhagiratha","Five generations — Sagara, Anshuman, Dilipa, Raghu, and Bhagiratha","Two generations — Sagara and Bhagiratha",1),
+]},
+{n:"Bhagiratha and the descent of Ganga",qs:[
+Q("Only Ganga's waters could grant the 60,000 souls moksha. Where was Ganga flowing at the time?","In the cosmic ocean beneath the Earth","Only in the heavens","Through Patala, the netherworld","In Brahmaloka, Brahma's abode",1),
+Q("Who agreed to release Ganga, and what warning was given?","Vishnu agreed; he warned the Asuras would try to stop her","Brahma agreed but warned the Earth would shatter from the force","Shiva agreed but warned the heavens would collapse","Indra agreed but warned the Devas would lose their power",1),
+Q("How did Shiva control Ganga's descent?","He placed a mountain in her path to slow her flow","Shiva trapped her waters in his jata — his matted locks — and released them in controlled streams","He froze her waters mid-air and melted them gradually","He used the Pinaka Dhanusha to split the flow into tributaries",1),
+Q("Ganga's flow destroyed the sacrificial altar of Jahnu. What did Jahnu do?","He cursed Ganga to flow underground forever","He built a dam to redirect her course","Jahnu drank the entire river; Bhagiratha pleaded for mercy; Jahnu released Ganga from his ear","He used his tapasya to split Ganga into seven streams",2),
+Q("Where did Bhagiratha lead Ganga to purify the 60,000 souls?","To Varanasi, where the souls awaited liberation","To Prayagraj, at the confluence of three rivers","Across the Indian plains to Ganga Sagar","To the foothills of the Himalayas",2),
+Q("What name did Ganga receive after being released from Jahnu's ear, and why?","Bhagirathi — named after Bhagiratha who led her to Earth","Jahnavi — because Jahnu released Ganga from his ear, giving her a second birth","Mandakini — named after the celestial stream she originated from","Alakananda — named after Jahnu's ashram",1),
+]},
+{n:"Harishchandra",qs:[
+Q("Harishchandra promised his firstborn to which deity in exchange for a son?","Indra","Agni","Varuna","Yama",2),
+Q("Ajigarta sold his middle son Shunahshepa as a substitute sacrifice for how many cows?","A thousand cows","Ten cows","Fifty cows","A hundred cows",3),
+Q("Who taught Shunahshepa two secret hymns that spared his life, and to which deities were they addressed?","Vashishtha taught him hymns to Indra and Surya","Vishvamitra taught him hymns to Varuna and Agni","Narada taught him hymns to Vishnu and Brahma","Agastya taught him hymns to Shiva and Parvati",1),
+]},
+{n:"Trishanku and the Southern Swarga",qs:[
+Q("Why was Trishanku cursed to become a chandala?","He insulted the Saptarishis during a yagna","He attempted to enter Swarga without permission and the Devas cast him out","When Trishanku persisted in his desire to enter Swarga in his physical body after Vashishtha refused, Vashishtha's sons cursed him","He stole sacred objects from Vashishtha's ashram",2),
+Q("What did Vishvamitra do after Indra pushed Trishanku back down?","He destroyed Indra's throne in Swarga","Vishvamitra shouted 'stay!', stopping Trishanku mid-air through sheer willpower, and began creating an entirely new set of stars and a Southern Swarga","He cursed Indra to fall from Swarga","He launched Trishanku back toward Swarga using the Brahmastra",1),
+Q("Which constellation represents Trishanku suspended in his middle Swarga?","Orion","The constellation Crux, also known as the Southern Cross","Ursa Major","Cassiopeia",1),
+Q("How does Trishanku remain in his Southern Swarga?","He stands upright on a celestial platform","He floats freely among the new stars","He remains suspended upside-down","He sits on a throne between two constellations",2),
+]},
+{n:"Dasharatha and Rama",qs:[
+Q("Who were Dasharatha's three wives and their respective sons?","Kausalya — mother of Rama; Kaikeyi — mother of Bharata; Sumitra — mother of Lakshmana and Shatrughna","Kausalya — mother of Rama and Lakshmana; Kaikeyi — mother of Bharata; Sumitra — mother of Shatrughna","Kausalya — mother of Rama; Sumitra — mother of Bharata; Kaikeyi — mother of Lakshmana and Shatrughna","Kaikeyi — mother of Rama; Kausalya — mother of Bharata; Sumitra — mother of Lakshmana and Shatrughna",0),
+Q("Bharata's son Taksha founded which city?","Hastinapura","Indraprastha","Takshashila","Dwaraka",2),
+Q("How did Kaikeyi save Dasharatha's life in battle?","She shielded him with a divine weapon","She fired arrows at the Asura Sambasura from behind","She served as his charioteer and inserted her finger into a broken wheel hub","She summoned the Devas to intervene",2),
+Q("Why did Rama kill Bali of the Vanaras from concealment?","Because Bali was immune to all weapons except those fired from hiding","Because Brahma's boon allowed Bali to absorb half of any opponent's strength","Because Bali could only be defeated during sleep","Because Sugriva demanded it as a condition of the alliance",1),
+Q("What was the karmic consequence of Rama killing Bali of the Vanaras by stealth?","Rama had to spend an extra year in exile","Bali was reborn as the hunter Jara, who struck Krishna's foot, balancing the karmic debt","Rama was cursed by Bali's wife to lose Sita","Bali was reborn as Duryodhana to oppose dharma in a future age",1),
+Q("How many years was Rama exiled to the Dandaka Forest?","Twelve years","Thirteen years","Fourteen years","Seven years",2),
+]},
+{n:"The Chandravanshi Dynasty",qs:[
+Q("Chandra eloped with Tara, who was whose wife?","Vashishtha's","Shukracharya's","Brihaspati's","Angirasa's",2),
+Q("Who intervened to return Tara to Brihaspati, and what was the consequence?","Brahma and Vishnu intervened; Tara returned but was already pregnant with Budha","Indra and Shiva intervened; Tara was already pregnant; their son was Budha","Narada and Agastya intervened; Tara returned and bore no children","The Saptarishis intervened; Tara was cursed to never bear children again",1),
+Q("Budha married Ila, daughter of Vaivasvata Manu. Their son was Pururavas. Who did Pururavas father?","Nahusha","Yayati","Ayus","Budha",2),
+Q("Kshatravriddha, son of Ayus, established the royal line of which city?","Hastinapura","Mathura","Kashi","Prayagraj",2),
+]},
+{n:"Nahusha — the temporary Indra",qs:[
+Q("Who was Ashokasundari, and how did she come into being?","She was the daughter of Brahma, born from a lotus","She was the daughter of Shiva and Durga, and sister of Ganesha and Kartikeya; she came from Kalpavriksha","She was the daughter of Indra, born from the waters of Swarga","She was the daughter of Vishnu and Lakshmi, born during the Samudra Manthan",1),
+Q("Why did Indra take temporary leave from his throne?","He was banished by Brahma for arrogance","He was defeated by Nahusha in single combat","He took leave to atone for killing Vritrasura","He went on a pilgrimage to gain more spiritual power",2),
+Q("What weapon was forged from Dadhichi's bones, and who fashioned it?","The Trishula, fashioned by Shiva","The Vajra — Indra's thunderbolt weapon — fashioned by Vishwakarma","The Sudarshana Chakra, fashioned by Brahma","The Pashupatastra, fashioned by Vishwakarma",1),
+Q("What condition did Indrani set for Nahusha when he demanded she marry him?","He must defeat Indra in battle first","He must arrive in a palki — a palanquin — carried by the Saptarishis","He must perform a thousand years of tapasya","He must obtain Brahma's blessing",1),
+Q("How was Nahusha cursed, and what triggered it?","He insulted Brihaspati, who cursed him to become a tree","He kicked Agastya for being too slow and shouted 'sarpa, sarpa'; Agastya cursed Nahusha to live as a snake","He struck Vashishtha, who cursed him to fall from Swarga","He mocked Indra's wife, and the Saptarishis jointly cursed him",1),
+]},
+{n:"Yayati — the split into Yadava and Paurava lines",qs:[
+Q("Yayati had two wives. Who was Devayani's father, and who was Sharmishtha's father?","Devayani was the daughter of Brihaspati; Sharmishtha was the daughter of Vrishaparva","Devayani was the daughter of Shukracharya; Sharmishtha was the daughter of Vrishaparva, an Asura who was Shukracharya's disciple","Devayani was the daughter of Vashishtha; Sharmishtha was the daughter of Daksha","Devayani was the daughter of Shukracharya; Sharmishtha was the daughter of Bali",1),
+Q("Yadu, founder of the Yadava Dynasty, was the son of Yayati and whom?","Sharmishtha","Devayani","Sanjana","Ashokasundari",1),
+Q("Puru, founder of the Paurava Dynasty, was the son of Yayati and whom?","Devayani","Sharmishtha","Ashokasundari","Gandhari",1),
+Q("Druhyu, who established the royal line of Gandhara, was the son of Yayati and whom?","Devayani","Sanjana","Sharmishtha","Tara",2),
+Q("Why was Yadu barred from ever being crowned, and what consequence did this have for Krishna?","Yadu was cursed by Brahma; Krishna was therefore born as a Shudra","Yadu refused to transfer his youth to Yayati; which is why Krishna, a descendant of Yadu, was never a raja","Yadu lost a divine contest to Puru; Krishna was therefore never acknowledged by the Suryavanshis","Yadu insulted Shukracharya; Krishna was cursed to never rule a kingdom",1),
+Q("Yayati gave Puru the title of samrat and the kingdom of Pratishthana. Where is Pratishthana?","Present-day Mathura","Present-day Varanasi","Present-day Prayagraj","Present-day Ujjain",2),
+]},
+{n:"Vishvamitra and Vashishtha — the great rivalry",qs:[
+Q("When Kaushika visited Vashishtha's ashram, how did Vashishtha feed his entire army?","Using a divine yagna that produced unlimited food","Using the cow Nandini, daughter of Kamadhenu","Using a boon from Annapurna, goddess of food","Using the Kalpavriksha",1),
+Q("After Kaushika tried to take Nandini by force, what happened to every divya astra he fired?","They bounced back and destroyed his own army","Vashishtha's spiritual power swallowed every divya astra Kaushika fired","They turned into flowers upon touching Vashishtha","They were absorbed by Nandini and returned as milk",1),
+Q("Who did Indra send to seduce Vishvamitra the first time, and what was the result?","Rambha; Vishvamitra cursed her to stone","Urvashi; Vishvamitra fell in love and lost his tapasya","Menaka; he fell in love, broke his celibacy, and lived with her for ten years","Tilottama; Vishvamitra rejected her but lost concentration",2),
+Q("Who was Shakuntala's biological parents, and who adopted her?","Vishvamitra and Urvashi; adopted by Vashishtha","Vishvamitra and Menaka; Kanva adopted Shakuntala","Indra and Menaka; adopted by Bharadvaja","Kaushika and Rambha; adopted by Kanva",1),
+Q("When Indra sent Rambha, what did Vishvamitra do, and what did he lose?","He ignored her and gained the title Brahmarishi","He cursed her to stone — losing his merit again, this time to anger","He fell in love and lost ten more years","He sent her back to Indra with a warning",1),
+Q("What practices did Vishvamitra undertake for a thousand years to master his senses?","Recitation of the Gayatri Mantra and water fasting","Mauna — a vow of complete silence — and extreme fasting","Standing on one foot while chanting hymns to Agni","Living underwater in the Ganga while performing pranayama",1),
+]},
+{n:"Kalmashapada",qs:[
+Q("Why did Shakti, Vashishtha's eldest son, curse Kalmashapada?","Kalmashapada insulted the Saptarishis at a yagna","They met on a narrow forest path, neither would give way, and Kalmashapada struck Shakti with his whip","Kalmashapada stole Nandini from Vashishtha's ashram","Kalmashapada refused to pay guru dakshina to Vashishtha",1),
+Q("Who ensured that Shakti's curse on Kalmashapada took effect immediately?","Narada","Agastya","Vishvamitra","Brihaspati",2),
+Q("What did Kalmashapada do to Vashishtha's family after becoming a Rakshasa?","He imprisoned Vashishtha in a dungeon for twelve years","He devoured Shakti and all one hundred of Vashishtha's sons","He destroyed Vashishtha's ashram and stole Nandini","He cursed all of Vashishtha's descendants to be born as mortals",1),
+Q("What title was Vishvamitra conferred by Vashishtha, and what triggered this?","Rajarishi; after defeating Vashishtha in debate","Brahmarishi; after witnessing Vashishtha's forgiveness and approaching him as a student","Maharishi; after completing a thousand years of tapasya","Devarishi; after Vashishtha saw his devotion to Vishnu",1),
+Q("Vishvamitra is credited as the drashta of what, and what else did he do?","The drashta — the seer — of the Gayatri Mantra; he trained Rama and Lakshmana to vanquish Rakshasas","The drashta of the Nasadiya Sukta; he trained Bhishma and Parashurama","The drashta of the Mrita Sanjivani Mantra; he trained the Pandavas","The drashta of the Rudra Mantra; he trained Rama and Bharata",0),
+]},
+{n:"From Bharata to Kuru — the founding of the Kaurava Dynasty",qs:[
+Q("Shakuntala married Dushyanta. Their son Bharata gave his kingdom to whom?","His eldest son, to continue the bloodline","A worthy successor — Bhumanyu, his adopted son — not his own son","His guru, as a form of guru dakshina","The Saptarishis, to govern in his absence",1),
+Q("Who married Tapti, daughter of Vivasvan and Chhaya, and who was their son?","Dushyanta married Tapti; their son was Bharata","Bhumanyu married Tapti; their son was Kuru","Samavarna married Tapti; their son was Kuru","Hastin married Tapti; their son was Shantanu",2),
+Q("Who founded the Kaurava Dynasty?","Bharata","Puru","Kuru","Shantanu",2),
+]},
+{n:"Uparichara Vasu, Satyavati, and the bridge to the Mahabharata",qs:[
+Q("Uparichara Vasu ruled which kingdom, and who was its original founder?","The Magadha Kingdom, founded by Brihadratha","The Chedi Kingdom, founded by Chidi from the Yadava bloodline","The Panchala Kingdom, founded by Drupada","The Matsya Kingdom, founded by Matsya",1),
+Q("How were Satyavati and Matsya born?","From a yagna performed by Uparichara Vasu","From the Apsara Adrika, who was in the form of a fish; born when the fish was cut open by a fisherman","From a lotus that bloomed in the Yamuna River","From the blessings of Parashurama",1),
+Q("Who raised Satyavati?","Vishrava, a wandering rishi","Uparichara Vasu himself","The fisherman-chieftain Dasharaja","Parashara, grandson of Vashishtha",2),
+Q("Who were the parents of Vyasa?","Vashishtha was the father and Satyavati was the mother","Uparichara Vasu was the father and Adrika was the mother","Parashara was the father and Satyavati was the mother","Bharadvaja was the father and Satyavati was the mother",2),
+Q("Brihadratha's son Jarasandha founded which kingdom?","The Chedi Kingdom","The Matsya Kingdom","The Magadha Kingdom","The Anga Kingdom",2),
+]},
+{n:"The Vasus and the birth of Bhishma",qs:[
+Q("Why were the eight Vasus cursed to be born on Earth as mortals?","They insulted Brahma at a celestial assembly","Prabhas and his brothers stole the cow Nandini from Vashishtha","They attempted to enter Vaikuntha without permission","They sided with the Asuras during the Samudra Manthan",1),
+Q("What was the pact the Vasus made with Ganga?","She would raise all eight as warriors and send them to battle the Asuras","She would drown seven immediately after birth to liberate them to Swarga while the eighth — Prabhas — would live a full life","She would educate all eight and then send them to Swarga after twelve years","She would protect all eight until they reached adulthood",1),
+Q("In a previous incarnation, who was Shantanu, and why was he cursed?","He was Nahusha; cursed for arrogance","He was Mahabhisha; in Brahma's court, a breeze displaced Ganga's clothing and he stared lustfully; Brahma cursed both to be born as mortals","He was Pratipa; cursed for refusing to marry Ganga","He was Vasu; cursed for stealing from Vashishtha",1),
+Q("Prabhas was born as Devavrata, son of Shantanu and Ganga. He later became known by what name?","Dronacharya","Bhishma","Kripacharya","Vidura",1),
+Q("Why did Prabhas receive a harsher sentence than the other seven Vasus?","He was the most arrogant among them","He had directly insulted Vashishtha","He led the theft of the cow Nandini","He refused to apologize when the other Vasus begged for mercy",2),
+]},
+{n:"From Shantanu to the Kuru succession",qs:[
+Q("What condition did Dasharaja set for accepting Satyavati's marriage to Shantanu?","Satyavati must be crowned queen immediately","Devavrata must vow lifelong celibacy, ensuring Satyavati's lineage would rule Hastinapura","Shantanu must give up his throne to Dasharaja","Shantanu must banish Ganga and her son",1),
+Q("Shantanu and Satyavati had two sons. Who were they?","Dhritarashtra and Pandu","Vichitravirya and Chitrangada","Bhishma and Vidura","Vichitravirya and Bhishma",1),
+Q("How were Kripacharya and his sister Kripi found?","They were born from a yagna performed by Dronacharya","They were found abandoned by Shantanu","They descended from the heavens during a storm","They were discovered by Bhishma in the forest",1),
+]},
+{n:"Amba, Ambika, and Ambalika",qs:[
+Q("Why did Bhishma arrive at the swayamvara of the three daughters of the raja of Kashi?","He was invited as the chief guest","He came to find a bride for himself","Hastinapura was not invited, so Bhishma arrived alone, placed the three rajkumaris in his chariot, and defeated the pursuing rajas","He was sent by Satyavati to kidnap the princesses",2),
+Q("Ambika and Ambalika married Vichitravirya and became the mothers of whom?","Bhishma and Vidura","Pandu and Vidura","Dhritarashtra and Pandu","Dhritarashtra and Bhishma",2),
+Q("What happened to Amba after Bhishma released her?","She married another raja and lived happily","Shalva rejected her for having been 'won' by another man; Bhishma refused to marry her due to his vow","She became a priestess in a temple at Kashi","She returned to her father and never married",1),
+Q("Amba performed intense tapasya and was reborn as whom?","Draupadi, destined to cause the Kauravas' downfall","Shikhandi, destined to cause Bhishma's downfall","Kunti, destined to bear the Pandavas","Gandhari, destined to curse Krishna",1),
+Q("Who challenged Bhishma on Amba's behalf, and what was the outcome?","Dronacharya challenged Bhishma but was defeated","Parashurama challenged Bhishma but was defeated","Shalva challenged Bhishma but was defeated","Krishna challenged Bhishma but the fight was stopped by the Devas",1),
+]},
+{n:"Vyasa and the next generation",qs:[
+Q("Why was Vyasa summoned for niyoga?","To teach the Vedas to the next generation","Because Vichitravirya was dead and there were no heirs; the Kuru lineage faced extinction","To perform a yagna that would produce divine warriors","To bless the kingdom against an Asura invasion",1),
+Q("Why was Dhritarashtra born blind?","Because Vyasa cursed Ambika for her disrespect","Because Ambika closed her eyes when Vyasa appeared","Because of a curse from Gandhari in a previous life","Because Shiva punished the Kuru lineage",1),
+Q("Vidura was born healthy and wise from whom, and what role did he later assume?","From Satyavati's maid; he became the royal priest","From Ambika's maid; he became Hastinapura's prime minister","From a maid sent by Ambika for the third attempt; he became Hastinapura's prime minister","From Ambalika herself; he became the chief minister",2),
+Q("In a previous life, what had Dhritarashtra done that resulted in his being born blind with 100 sons who would all die?","He had blinded a father bird and killed its 100 fledglings","He had killed 100 sages who were meditating","He had destroyed 100 nests of sacred birds","He had stolen the eyes of a rishi and killed his 100 students",0),
+]},
+{n:"The curse of Pandu",qs:[
+Q("While hunting, Pandu shot a deer that was actually whom in disguise?","Narada","Durvasa","Vashishtha","Kindama",3),
+Q("What was the dying Kindama's curse on Pandu?","He would lose his kingdom within a year","Approaching his wives with desire would kill him instantly","He would never father children","He would be reborn as an animal in his next life",1),
+Q("Through Kunti, which Devas fathered which Pandavas?","Yama fathered Bhima, Vayu fathered Yudhishthira, and Indra fathered Arjuna","Yama fathered Yudhishthira, Vayu fathered Bhima, and Indra fathered Arjuna","Indra fathered Yudhishthira, Vayu fathered Bhima, and Yama fathered Arjuna","Yama fathered Yudhishthira, Indra fathered Bhima, and Vayu fathered Arjuna",1),
+Q("Through Madri, who fathered the twins Nakula and Sahadeva?","The Adityas","Surya and Chandra","The Ashwini Kumaras","Vayu and Agni",2),
+Q("Before dying, Pandu gave Sahadeva a boon enabling mastery of what?","Warfare — specifically the use of divya astras","Jyotish — astrology; Sahadeva knew how the Mahabharata would end","Ayurveda — the science of healing","Sangeet — the science of music and sound",1),
+]},
+{n:"Krishna — birth and early life",qs:[
+Q("Who was Kansa in relation to Devaki?","Her brother","Actually her cousin, being Ugrasena's brother's daughter; but referred to as his sister","Her uncle","Her stepbrother through Ugrasena's second wife",1),
+Q("How was Balarama born?","The seventh child was transferred to the womb of Rohini, Vasudeva's other wife, who gave birth to Balarama","Rohini conceived Balarama naturally with Vasudeva before his imprisonment","Balarama was born from a divine lotus in Gokula","Devaki gave birth to Balarama in prison, and he was smuggled out",0),
+Q("The eighth child was swapped with whose daughter in Gokula?","Rohini and Vasudeva's daughter","Nanda and Yashoda's daughter Yogamaya","Dasharaja and his wife's daughter","Ugrasena's granddaughter",1),
+Q("Who is worshipped today as Vindhyavasini?","Sita","Yogamaya — a reincarnation of Durga — who cursed Kansa before ascending","Devaki, after her apotheosis","Radha, as a form of Swarupa Shakti",1),
+Q("With whom did Krishna and Balarama study, and in whose ashram?","With Sudama in the ashram of Sandipani, a Shiva devotee","With Sudama in the ashram of Vashishtha","With Arjuna in the ashram of Dronacharya","With Vidura in the ashram of Bharadvaja",0),
+Q("Who was Subhadra, and whom did she marry? Who was their son?","Subhadra was Krishna's cousin, daughter of Ugrasena; she married Bhima; their son was Ghatotkacha","Subhadra was Krishna's half-sister — daughter of Vasudeva and Rohini — she married Arjuna; their son was Abhimanyu","Subhadra was Krishna's sister through Devaki; she married Nakula; their son was Shatanika","Subhadra was Balarama's daughter; she married Arjuna; their son was Abhimanyu",1),
+]},
+{n:"Shakuni, Gandhari, and the seeds of the great war",qs:[
+Q("Where was the Gandhara Kingdom located?","Present-day Punjab","Present-day Rajasthan","Present-day Afghanistan","Present-day Balochistan",2),
+Q("Why was Gandhari technically a widow before marrying Dhritarashtra?","She was first married to a goat to nullify the dosha of being a manglik","Her first husband died in battle before the wedding was consummated","She was cursed by a rishi to carry the mark of widowhood","She performed a symbolic marriage to a tree to remove a curse",0),
+Q("Why did Bhishma imprison Shakuni's entire family?","Shakuni had insulted Bhishma at the wedding ceremony","Bhishma discovered Gandhari was technically a widow after being married to a goat, and felt the Kuru lineage was insulted","Saubala had declared war on Hastinapura","Shakuni had tried to assassinate Dhritarashtra",1),
+Q("How were the enchanted dice created?","They were blessed by Shukracharya using a dark mantra","Saubala told Shakuni to fashion dice from his thigh bone after his death; the dice contained his soul and wrath","Shakuni carved them from the tusk of a divine elephant","They were forged from the iron of a fallen celestial weapon",1),
+Q("What did the enchanted dice ultimately cause?","They bankrupted the Pandavas, humiliated Draupadi, and triggered the great war","They caused the death of Dhritarashtra","They destroyed the Gandhara Kingdom from within","They corrupted the Kuru treasury and led to famine",0),
+]},
+{n:"Karna — birth, identity, and allegiance",qs:[
+Q("How did teenage Kunti come to possess the mantra to summon Devas?","Brahma granted it to her during a yagna","She learnt it from Vashishtha's scriptures","As a girl, Kunti served Durvasa so well that he granted her a mantra to summon any Deva","She received it from Narada during his visit to her father's court",2),
+Q("Karna was born wearing what, and what did it make him?","A golden crown and divine sandals; it made him immune to curses","Golden armour (kavacha) and earrings (kundala) that were part of his skin, making him invincible","A sacred thread and a divine gem; it made him visible to the Devas","Silver armour and a helmet; it made him impervious to mortal weapons",1),
+Q("Who found and raised Karna after Kunti set him afloat?","A Brahmana couple in Hastinapura","Adhiratha, Dhritarashtra's charioteer, and Adhiratha's wife Radha","Nanda and Yashoda in Gokula","A fisherman-chieftain on the banks of the Ganga",1),
+Q("Why did Parashurama curse Karna?","Karna had stolen a divine weapon from Parashurama's ashram","Karna pretended to be a Brahmana; once, while Parashurama slept on Karna's lap, a scorpion bit Karna and he did not flinch; Parashurama realised he was a Kshatriya","Karna insulted Parashurama's lineage during a lesson","Karna failed a test of humility that all students had to pass",1),
+Q("What did Indra give Karna in return for his kavacha and kundala?","The Brahmastra","The Gandiva","The Vasavi Shakti — a divya astra capable of killing Arjuna","The Narayanastra",2),
+]},
+{n:"Karna and Duryodhana's friendship",qs:[
+Q("At the martial exhibition, why did Kripacharya halt Karna's duel with Arjuna?","Karna was using a forbidden weapon","A rajkumar could only fight a peer of equal lineage","The exhibition had a time limit that expired","Dronacharya ordered the halt to protect his student",1),
+Q("What did Duryodhana do when Karna was mocked for his origins?","He gave Karna his personal chariot and weapons","He crowned Karna raja of Anga on the spot","He challenged the crowd to fight Karna themselves","He declared Karna a Kshatriya by royal decree",1),
+Q("When Karna asked what he could give Duryodhana in return, what did Duryodhana ask for?","Half of Karna's kingdom","Karna's divine kavacha and kundala","Only lifelong friendship","Karna's allegiance in any future war",2),
+]},
+{n:"Karna's wives and sons",qs:[
+Q("Who was Vrushali in relation to Duryodhana?","The daughter of Duryodhana's charioteer","The sister of Satyasena, Duryodhana's charioteer","Duryodhana's cousin from the Gandhara Kingdom","The daughter of Shakuni",1),
+Q("Which of Karna's sons survived the Kurukshetra War and learnt archery under Arjuna?","Vrishasena","Vrishaketu","Satyasena","Sudama",1),
+Q("Who was Bhanumati, and what was her connection to Karna's family?","Bhanumati was Duryodhana's wife, from the Kalinga Kingdom, present-day Odisha; she was a friend of Supriya, Karna's second wife","Bhanumati was Karna's mother-in-law","Bhanumati was Duryodhana's sister who married Karna","Bhanumati was Shakuni's wife and Gandhari's sister-in-law",0),
+Q("Duryodhana and Bhanumati's son Lakshmana met what fate?","He survived the war and became the next king","He died in the Kurukshetra War","He was exiled after the war","He renounced the throne and became a sage",1),
+]},
+{n:"The feud between Drupada and Dronacharya",qs:[
+Q("What did Drupada promise Dronacharya during their childhood friendship?","To make Dronacharya his chief minister","To share half his kingdom","To give Dronacharya his finest horse","To fund Dronacharya's ashram forever",1),
+Q("What was Dronacharya's guru dakshina from his students?","A hundred cows from each student","The capture of Drupada","The conquest of Gandhara","The Pinaka Dhanusha from Janak's treasury",1),
+Q("From the yagna Drupada performed for revenge, who emerged?","Shikhandi and Draupadi","Dhrishtadyumna — destined to kill Dronacharya — and Draupadi","Dhrishtadyumna and Shikhandi","Abhimanyu and Draupadi",1),
+]},
+{n:"Eklavya and Jarasandha",qs:[
+Q("Eklavya was the son of Hiranyadhanus of which tribe?","The Vanaras — the monkey race","The Nishadas — a forest-dwelling tribe","The Nagas — the serpent race","The Gandharvas — the celestial musicians",1),
+Q("Why did Jarasandha launch revenge attacks on Mathura after Krishna killed Kansa?","Kansa was Jarasandha's brother","Kansa had married Jarasandha's two daughters Asti and Prapti, making Jarasandha his father-in-law","Jarasandha had sworn an oath to protect Kansa","Kansa was Jarasandha's chief military commander",1),
+Q("How was Jarasandha given life at birth?","Brahma breathed life into him","A Rakshasi named Jara joined his two lifeless halves","Shiva revived him with the Mrita Sanjivani Mantra","Vishwakarma assembled his body parts",1),
+]},
+{n:"Arjuna's curse and Brihannala",qs:[
+Q("Why did Urvashi curse Arjuna to live as a eunuch?","Arjuna insulted her dancing","Arjuna said he saw her as a mother figure since she was a member of Indra's court; she was offended","Arjuna refused to accept her divine gift","Arjuna chose another Apsara over her",1),
+]},
+{n:"The game of dice and the humiliation of Draupadi",qs:[
+Q("Who built the Maya Sabha, and what was it?","Vishwakarma built it; a celestial palace of gold","Mayasura built it; a hall of optical illusions","Tvashtar built it; a floating palace above Indraprastha","Shakuni built it; a palace designed to trap the Pandavas",1),
+Q("What did Draupadi say to Duryodhana that became the primary reason he plotted the game of dice?","She called him the blind son of a blind man after he fell in the Maya Sabha","She insulted his wife Bhanumati's lineage","She refused to serve him food at the yagna","She laughed at his fighting skills in the arena",0),
+Q("How did Krishna signal the solution for killing Jarasandha?","He drew a picture of Jarasandha being torn apart","He snapped a blade of grass and tossed the halves apart","He whispered the secret to Bhima's ear","He told Arjuna to use the Pashupatastra",1),
+Q("What did Duryodhana do to Draupadi during the game of dice, and what vow did Bhima make in response?","Duryodhana threw his crown at Draupadi; Bhima vowed to crush Duryodhana's skull","Duryodhana ordered Draupadi imprisoned; Bhima vowed to destroy the Kaurava palace","Duryodhana patted his thigh, signalling Draupadi to sit on his lap; Bhima vowed to break those thighs with his mace","Duryodhana laughed at Draupadi's plight; Bhima vowed to kill all 100 Kaurava brothers",2),
+Q("During Dushasana's attempt to disrobe Draupadi, what did Krishna do, and why?","Krishna appeared in court and threatened Dushasana with the Sudarshana Chakra","Krishna endlessly supplied cloth — repaying a debt, as she had once torn her sari to tend his wound","Krishna summoned Draupadi's brothers to rescue her from the court","Krishna cursed Dushasana to die by Bhima's hand in the Kurukshetra War",1),
+Q("Who was the only Kaurava brother to condemn the disrobing of Draupadi, and what was his argument?","Yuyutsu; he argued Draupadi was a queen and must be respected","Vikarna; he argued Yudhishthira had no right to wager Draupadi since he had already lost himself","Dushasana; he later repented and argued against the act","Chitrasena; he argued the game itself was illegal",1),
+]},
+{n:"The Laksha Griha and Ghatotkacha",qs:[
+Q("What was the Laksha Griha?","A house made of gold designed to impress the Pandavas","A house made of lac, a highly flammable resin — a plot to burn the Pandavas alive","A fortress made of iron where the Pandavas were imprisoned","A palace made of sandalwood that was set ablaze by lightning",1),
+Q("Who saved the Pandavas from the Laksha Griha?","Krishna's intervention","Vidura's intervention","Bhishma's secret warning","Draupadi's quick thinking",1),
+Q("Barbarik possessed the Teen Baan — three divine arrows. What could they do, and what did Krishna demand of Barbarik?","They could destroy any city; Krishna demanded the arrows themselves","They could finish any army in minutes; Krishna told Barbarik a Kshatriya must be sacrificed before the war; Barbarik offered his head","They could kill any single warrior; Krishna asked Barbarik to use them against Duryodhana","They could create an impenetrable shield; Krishna demanded them for Arjuna",1),
+]},
+{n:"The thirteen years of exile",qs:[
+Q("The thirteenth year was spent in Viratanagar, capital of which kingdom?","The Chedi Kingdom, present-day Madhya Pradesh","The Panchala Kingdom, present-day Uttar Pradesh","The Matsya Kingdom, present-day Rajasthan","The Madra Kingdom, in the Punjab region",2),
+Q("What role did Arjuna serve during the thirteenth year, and what curse was he fulfilling?","He served as a stable hand, fulfilling Durvasa's curse","He served as Brihannala, fulfilling Urvashi's one-year curse","He served as a cook, fulfilling Shiva's curse","He served as a musician, fulfilling Narada's curse",1),
+Q("During the thirteenth year in Viratanagar, what roles did the other Pandavas and Draupadi serve — apart from Arjuna as Brihannala?","Draupadi served as Sairandhri, Sudeshna's maid; Yudhishthira served as Virat's minister; Bhima served as the royal cook; Nakula and Sahadeva worked in the stables","Draupadi served as a dancer; Yudhishthira served as Virat's priest; Bhima served as a bodyguard; Nakula and Sahadeva served as scribes","Draupadi served as Sudeshna's handmaiden; Yudhishthira served as Virat's general; Bhima served as a woodcutter; Nakula and Sahadeva served as merchants","Draupadi served as a cook; Yudhishthira served as Virat's advisor; Bhima served as a stable hand; Nakula and Sahadeva served as guards",0),
+Q("Who attacked Viratanagar, and who defeated them?","The Kauravas attacked; Bhima defeated them","The Trigartas — allies of Duryodhana, led by their ruler, Susharma — attacked; Arjuna as Brihannala single-handedly defeated them and the entire Kuru army","The Magadha army attacked; Yudhishthira defeated them","The Nishadas attacked; Nakula and Sahadeva defeated them",1),
+]},
+{n:"The Yaksha Prashna",qs:[
+Q("When the Yaksha offered to revive one brother, whom did Yudhishthira choose and why?","He chose Bhima, because Bhima was the strongest warrior needed for the upcoming war","He chose Arjuna, because Arjuna was the finest archer","He chose his stepbrother Nakula — since he as Kunti's son was alive, a son of Madri should also survive","He chose Sahadeva, because Sahadeva's knowledge of jyotish was indispensable",2),
+Q("The Yaksha revealed himself as whom?","Indra, king of the Devas","Dharma, the cosmic principle","Yama, Yudhishthira's divine father","Vishnu, the preserver",2),
+]},
+{n:"The Madra Kingdom and Shalya",qs:[
+Q("How did Duryodhana secure Shalya's support?","He defeated Shalya in a duel and claimed his allegiance","Duryodhana built lavish rest houses along Shalya's route, then revealed himself and claimed his support","He offered Shalya the throne of Hastinapura after the war","He held Shalya's son hostage",1),
+]},
+{n:"Before the Kurukshetra War",qs:[
+Q("Krishna offered Duryodhana and Arjuna a choice. What were the two options, and who chose what?","His entire treasury or his counsel; Duryodhana chose the treasury, Arjuna chose counsel","His entire Narayani Sena or himself unarmed and non-combatant; Duryodhana chose the army, Arjuna chose Krishna","His divine weapons or his chariot; Duryodhana chose the weapons","His Sudarshana Chakra or his personal army; Arjuna chose the Chakra",1),
+Q("Vyasa offered Dhritarashtra divya drishti to watch the battle. What happened?","Dhritarashtra accepted and watched the entire war","Dhritarashtra declined; Vyasa granted it to Sanjaya, Dhritarashtra's charioteer and advisor","Dhritarashtra declined; Gandhari watched instead","Dhritarashtra accepted but could only see the first ten days",1),
+Q("Who was the only warrior to cross the battlefield and join the Pandavas from the Kaurava side?","Vikarna","Shalya","Yuyutsu — son of Dhritarashtra and a maid named Sughada","Kripacharya",2),
+]},
+{n:"Day 10 of the Kurukshetra War — the fall of Bhishma",qs:[
+Q("Why did Bhishma lower his weapons and refuse to fight when he saw Shikhandi?","Shikhandi was his grandchild and he could not strike family","Bhishma had vowed never to strike a woman or anyone who had been a woman; he recognised Amba's soul","Shikhandi possessed a divine shield that repelled all of Bhishma's weapons","Krishna placed a spell on Bhishma that made him unable to fight",1),
+Q("How did Bhishma fall?","He was struck by a single divine arrow from Shikhandi","Arjuna fired a relentless volley; Bhishma fell onto a bed of arrows","Krishna used the Sudarshana Chakra to wound him","Dhrishtadyumna struck him from behind while Shikhandi distracted him",1),
+]},
+{n:"Day 12 of the Kurukshetra War — Bhagadatta",qs:[
+Q("Bhagadatta was the ruler of which kingdom?","The Sindhu Kingdom, present-day Sindh","The Pragjyotisha Kingdom, present-day Assam","The Kalinga Kingdom, present-day Odisha","The Gandhara Kingdom, present-day Afghanistan",1),
+Q("When Bhagadatta launched the Vaishnavastra at Arjuna, what happened?","Arjuna deflected it with the Brahmastra","Krishna stepped in front; the weapon turned into a garland of flowers, returning to its source — Vishnu","Bhima intercepted the weapon and absorbed its energy","The weapon was neutralised by Arjuna's kavacha",1),
+Q("How did Arjuna defeat Bhagadatta?","He pierced Bhagadatta's heart with a divine arrow","Arjuna pierced the silk bandage holding Bhagadatta's eyelids open, blinding him, and struck him down","He used the Pashupatastra to destroy Bhagadatta's elephant","He challenged Bhagadatta to single combat on foot",1),
+]},
+{n:"Day 13 of the Kurukshetra War — the Chakravyuha and the death of Abhimanyu",qs:[
+Q("Why did Abhimanyu only know how to enter the Chakravyuha but not exit?","Dronacharya had deliberately withheld the exit strategy from him","Subhadra had dozed off while Arjuna explained the exit strategy during pregnancy","The exit strategy was known only to Krishna, who was away","Abhimanyu had refused to learn the exit, believing he would never need it",1),
+Q("Who blocked the other four Pandavas from entering the Chakravyuha, and how?","Dronacharya used a divine barrier","Jayadratha used a boon from Shiva — the power to hold back four Pandavas, excluding Arjuna, for one day","Karna fired a wall of arrows blocking their path","Ashwatthama used the Narayanastra to create an impassable field",1),
+Q("How was Abhimanyu ultimately killed?","He was struck by a single arrow from Karna while fighting bravely","Karna broke his dhanusha from behind; others killed his horses and charioteer; weaponless, he fought with a chariot wheel, then a mace; Dushasana's son struck him on the head","Dronacharya personally defeated him in single combat","He fell into a trap set by Shakuni within the formation",1),
+]},
+{n:"Day 14 of the Kurukshetra War — the killing of Jayadratha",qs:[
+Q("What vow did Arjuna make regarding Jayadratha?","To capture Jayadratha alive and bring him before Yudhishthira","To kill Jayadratha by sunset or immolate himself","To kill Jayadratha within the first hour of battle","To defeat Jayadratha in single combat before the Kaurava army",1),
+Q("Jayadratha's father Vridhakshatra had a boon regarding Jayadratha's head. What was it?","Whoever touched Jayadratha's head would be turned to stone","Whoever caused Jayadratha's head to fall to the ground would have their own head burst","Jayadratha's head could never be severed by a mortal weapon","Whoever saw Jayadratha's severed head would go blind",1),
+Q("How did Krishna ensure Vridhakshatra's boon was turned against himself?","Krishna caught Jayadratha's head in mid-air and placed it on a funeral pyre","Arjuna used a divya astra to carry the severed head into the lap of Vridhakshatra, who was meditating nearby; Vridhakshatra dropped the head — triggering the curse on himself","Krishna used the Sudarshana Chakra to guide the head away from the ground","Bhima caught the head and threw it onto Vridhakshatra's lap",1),
+]},
+{n:"The fall of Dronacharya",qs:[
+Q("How did Krishna drown out Yudhishthira's whisper 'the elephant'?","He ordered the war drums to be beaten loudly","Krishna blew his conch","He used a divine mantra to silence all sound except the first part","He instructed Bhima to roar simultaneously",1),
+Q("Who beheaded Dronacharya after he dropped his weapons?","Arjuna","Bhima","Dhrishtadyumna — fulfilling the prophecy","Shikhandi",2),
+]},
+{n:"Karna's fall",qs:[
+Q("Why did Krishna compel Karna to use the Vasavi Shakti on Ghatotkacha?","So that Karna would not save it for Arjuna","Because Ghatotkacha was the most dangerous warrior on the field that night","To test whether the Vasavi Shakti truly worked","Because Ghatotkacha was about to kill Duryodhana",0),
+Q("What role did Shalya play as Karna's charioteer?","He secretly steered the chariot into traps","He constantly praised Arjuna and insulted Karna to weaken his resolve","He abandoned Karna mid-battle, leaving him without a chariot","He fed Karna false intelligence about the Pandava positions",1),
+Q("Who was the final Kaurava general after Karna's death, and who killed him?","Ashwatthama; killed by Arjuna","Kripacharya; killed by Bhima","Shalya; killed by Yudhishthira","Shakuni; killed by Sahadeva",2),
+]},
+{n:"The final day of the Kurukshetra War — the fall of Duryodhana",qs:[
+Q("Under whom did both Bhima and Duryodhana study gada yuddha?","Dronacharya","Parashurama","Balarama, Krishna's elder brother","Kripacharya",2),
+Q("Why were Duryodhana's thighs his only vulnerable point?","Gandhari's blindfold slipped while gazing at his thighs, leaving them unprotected","Krishna had tricked him into covering his thighs with leaves when Gandhari asked him to come unclothed","Duryodhana had a wound from childhood that never healed on his thigh","Bhishma had cursed Duryodhana's thighs after being felled by arrows",1),
+Q("Why did Balarama raise his hala to kill Bhima, and who intervened?","Because Bhima used a forbidden weapon; Krishna intervened","Because Bhima struck Duryodhana's thighs — a move forbidden in gada yuddha as all strikes must be above the waist; Krishna intervened","Because Bhima insulted Balarama during the fight; Yudhishthira intervened","Because Bhima attacked Duryodhana after he had surrendered; Vyasa intervened",1),
+]},
+{n:"After the Kurukshetra War — Ashwatthama's rage",qs:[
+Q("What did Ashwatthama do in his nighttime attack on the Pandava camp?","He killed the five Pandavas in their sleep","He killed the Pandavas' five sons and Dhrishtadyumna","He destroyed the Pandava weaponry and supplies","He abducted Draupadi and held her hostage",1),
+Q("The Brahmashirastra was how many times more powerful than the Brahmastra?","Two times","Ten times","Four times, carrying four heads of Brahma versus one","Seven times",2),
+Q("What curse did Krishna place on Ashwatthama?","To live as a mortal with no memory of his divine knowledge","To roam the Earth in pain as a Chiranjeevi till the end of Kali Yuga","To be reborn as a Shudra in every subsequent life","To wander Patala for eternity",1),
+]},
+{n:"After the Kurukshetra War — Dhritarashtra's rage and Gandhari's curse",qs:[
+Q("How did Krishna prevent Dhritarashtra from crushing Bhima in an embrace?","He warned Bhima to dodge at the last moment","Krishna pushed an iron statue into Dhritarashtra's arms instead; Dhritarashtra shattered it","He placed a divine shield around Bhima","He paralysed Dhritarashtra's arms with a mantra",1),
+Q("What did Gandhari curse, and why?","She cursed the Pandavas to never enjoy their kingdom; she blamed them for the war","She cursed the Yadavas to perish in internal strife; she blamed Krishna, believing that as god he could have stopped the slaughter","She cursed Hastinapura to fall within a generation; she blamed Bhishma","She cursed Krishna to die alone; she blamed him for Duryodhana's death",1),
+]},
+{n:"The destruction of the Yadavas and the death of Krishna",qs:[
+Q("Who dressed as a pregnant woman with an iron ball as a womb to mock Kanva?","Pradyumna, Krishna's son","Aniruddha, Krishna's grandson","Samba, Krishna's son","Kritavarma, a Yadava warrior",2),
+Q("Who was the hunter Jara, and what was his karmic connection to Krishna?","Jara was a random hunter; no prior karmic connection","Jara was Bali of the Vanaras reborn, settling the karmic debt from Rama's concealed killing","Jara was Ravana reborn, seeking final revenge on Vishnu","Jara was Hiranyaksha reborn, completing the cycle of Jaya and Vijaya",1),
+]},
+{n:"Jagannath",qs:[
+Q("After Krishna's mortal death, what part of his body would not burn during cremation?","His feet","His hands","His heart","His head",2),
+Q("Who appeared in disguise to carve the idols at Puri, and what was his condition?","Narada appeared; he must not be spoken to","Vishwakarma appeared in disguise as an aged carpenter; he must not be disturbed until the work was complete","Tvashtar appeared; no one must enter the temple for a year","Brahma appeared; the king must fast until the work was done",1),
+Q("Why were the idols of Jagannath, Balabhadra, and Subhadra left without hands and feet?","The queen persuaded Indradyumna to open the doors before the work was complete; the carpenter vanished","The divine log was too small to carve full limbs","Vishwakarma intentionally left them incomplete as a test of faith","A storm destroyed the workshop before the work was finished",0),
+]},
+{n:"Yudhishthira's justice",qs:[
+Q("In Yudhishthira's verdict, who received the maximum punishment and why?","The Kshatriya — the most duty-bound has the least excuse","The Brahmana — the most enlightened has the least excuse for sin","The Vaishya — the wealthiest has the greatest responsibility","The Shudra — ignorance is no defence against the law",1),
+Q("Who received the lightest sentence in Yudhishthira's verdict, and why?","The Vaishya, for his contribution to the economy","The Shudra, for his lack of education","The Kshatriya, for his service in battle","The Brahmana, for his spiritual standing",1),
+]},
+{n:"The Pandavas' Final Journey",qs:[
+Q("In what order did the travellers fall on the journey to Meru Parvat?","Draupadi, Sahadeva, Nakula, Arjuna, and Bhima","Sahadeva, Nakula, Draupadi, Bhima, and Arjuna","Draupadi, Nakula, Sahadeva, Bhima, and Arjuna","Bhima, Arjuna, Nakula, Sahadeva, and Draupadi",0),
+Q("At the gates of Swarga, what form did the dog that followed Yudhishthira take?","Vishnu","Dharma","Narada","Yama — it was a final test of compassion",3),
+Q("Why was Duryodhana seen on a throne in Swarga?","He had secretly performed great acts of charity","Duryodhana had died a Kshatriya's death — bravery earns temporary Swarga","He had repented before his death and was forgiven","His mother Gandhari's prayers secured him a place",1),
+]},
+{n:"The narration of the Mahabharata",qs:[
+Q("Who narrated the Mahabharata to Janamejaya, and at what occasion?","Vyasa narrated it at the Rajasuya Yagna","Vaishampayana, a disciple of Vyasa, first recited it at the Sarpa Satra — a serpent sacrifice yagna","Sanjaya narrated it at Dhritarashtra's funeral","Narada narrated it at the coronation of Parikshit",1),
+Q("Why did Janamejaya perform the Sarpa Satra?","To avenge Abhimanyu's death at the hands of the Kauravas","To destroy all the Nagas who threatened his kingdom","To avenge Parikshit's death at the hands of Takshaka of the Nagas","To honour his great-grandfather Arjuna",2),
+]},
+{n:"Dating the epics — Nilesh Nilkanth Oak",qs:[
+Q("Based on Nilesh Nilkanth Oak’s research, what are the proposed dates for Brihadratha, Ramayana, Mahabharata, Dwaraka’s submersion and Krishna’s death, and Mahapadma Nanda?","34500 BC, 12209 BC, 5561 BC, 5525 BC, and 2300 BC","23025 BC, 10350 BC, 3025 BC, 3000 BC, and 5 BC","10120 BC, 5065 BC, 1015 BC, 975 BC, and 525 BC","8500 BC, 5500 BC, 1000 BC, 5 BC, and 5 CE",0),
+Q("Based on Nilesh Nilkanth Oak’s research, which figure from Greek diplomat Megasthenes' Indica is correlated with Krishna of Mathura?","Dionysus","Heracles","Sandrocottus","Alexander",1),
+Q("Based on Nilesh Nilkanth Oak’s research, which specific tribe recorded by Megasthenes helps identify Heracles as Krishna of Mathura?","The Shurasena tribe","The Kuru tribe","The Maurya tribe","The Pandava tribe",0),
+Q("Based on Nilesh Nilkanth Oak’s research, what name did the Greeks give to the Yamuna River?","Hydaspes","Indus","Jebares","Ganges",2),
+Q("Based on Nilesh Nilkanth Oak’s research, what were the ages of Arjuna, Bhishma, Dronacharya, and Krishna at the time of the Kurukshetra War?","21, 90, 65, and 25","40, 110, 75, and 45","65, 140, 85, and 67","85, 180, 100, and 90",2),
+Q("According to Nilesh Nilkanth Oak’s research, what genetic signature serves as a biological footprint of annihilation for the Kurukshetra War?","The mitochondrial DNA mutation","The Y-chromosome bottleneck — a 1:17 male-to-female reproductive ratio","The migration of the Indo-Aryans","The emergence of the lactase persistence gene",1),
+Q("Based on Nilesh Nilkanth Oak’s research, what was the status of the Saraswati River during the Mahabharata?","It was a mighty river at its peak","Initial decline due to altered glacier melt and monsoon patterns","It had completely dried up and vanished","It was redirected into the Ganga",1),
+Q("Based on Nilesh Nilkanth Oak’s research, what does the title Dasharatha signify?","The one who has seen ten thousand moons","The one who commands ten chariots or directions","The ruler of ten kingdoms","The one who has performed ten Ashvamedha Yagnas",1),
+Q("According to Nilesh Nilkanth Oak’s research, who was Janaka — the dynastic title for the ruler of Mithila — in the era of Valmiki?","Nimi","Seeradhwaja","Dasharatha","Janamejaya",1),
+Q("Based on Nilesh Nilkanth Oak’s research, the revised chaturyuga cycle spans how many human years in a binary cycle?","4.32 million","12,000","24,000","3,102",2),
+Q("According to Nilesh Nilkanth Oak’s research, what is our current position in the 24,000-year yuga cycle?","Early Kali Yuga","Descending Dvapara Yuga","Ascending Dvapara Yuga","Peak of Satya Yuga",2),
+]},
+{n:"Key scriptures",qs:[
+Q("How many verses does the Bhagavad Gita contain?","1,000 verses","108 verses","700 verses","500 verses",2),
+Q("How many verses does the Shrimad Bhagavatam contain?","12,000 verses","18,000 verses","24,000 verses","10,000 verses",1),
+]},
+{n:"Ancient Indian mathematics",qs:[
+Q("What were Brahmagupta's key contributions to mathematics as described in the text?","He was the first to calculate pi and define trigonometric functions","He was the first to define rules for zero and negative numbers, and the quadratic formula was explicitly stated for the first time in a Sanskrit verse by him","He invented the decimal system and first described the concept of infinity","He was the first to solve cubic equations and define logarithmic tables",1),
+Q("The Bakhshali Manuscript, carbon-dated to approximately 300 CE, deals with which mathematical topics?","Only basic arithmetic and geometry","Simultaneous equations, quadratic equations, arithmetic progressions, geometric progressions, and quadratic indeterminate equations","Trigonometry and calculus","Only prime numbers and basic algebra",1),
+Q("According to the text, who translated the works of ancient Indian mathematicians in his book from which the word 'algebra' is derived?","Euclid","Brahmagupta","Al-Khwarizmi","Aryabhata",2),
+]},
+{n:"Ancient Indian cosmology",qs:[
+Q("Sayanacharya, a scholar from 1315 CE, calculated what to near-modern precision?","The circumference of the Earth","The distance from the Earth to the Sun","The speed of light","The speed of sound",2),
+Q("What does the Nasadiya Sukta describe, and what parallel does the text draw with modern physics?","It describes the destruction of the universe, paralleling the concept of entropy in thermodynamics","It describes the hierarchy of the Devas, paralleling modern organizational theory","It describes creation emerging from nothingness, paralleling what modern physics calls the quantum vacuum","It describes the cyclical nature of time, paralleling the theory of the Big Bounce",2),
+]},
+{n:"Ancient Indian science",qs:[
+Q("Kanada described atoms — anu and paramanu — approximately how many years before modern atomic theories, and what else did his Vaisheshika Sutra contain?","500 years before; aphorisms on magnetism and electricity","2,000 years before; aphorisms regarding gurutva — gravity — and laws of motion","1,000 years before; aphorisms on sound and light","2,000 years before; aphorisms on planetary orbits and eclipses",1),
+Q("According to the text, what relationship do the yugas establish that is paralleled by the Theory of Relativity?","A relationship between mass and energy","A relationship between gravity and light","A relationship between speed and time","A relationship between space and matter",2),
+]},
+{n:"Ancient Indian medicine",qs:[
+Q("Sushruta's treatise — the Sushruta Samhita — documented which advanced surgical procedures and catalogued how many surgical instruments?","Heart surgery and bone setting; over 200 instruments","Rhinoplasty and cataract surgery; over 120 surgical instruments","Brain surgery and amputation; over 80 instruments","Rhinoplasty and trepanation; over 150 surgical instruments",1),
+Q("Which text describes every stage of fetal development, long before modern embryology?","The Sushruta Samhita","The Charaka Samhita","The Garbhopanishad","The Ashtanga Hridaya",2),
+]},
+{n:"The Pashupati Seal",qs:[
+Q("The Pashupati Seal, discovered at Mohenjo-daro, is dated to approximately when, and what does it depict?","Approximately 3500–3000 BC; a standing figure identified with Vishnu","Approximately 2500–2400 BC; a seated figure identified with Shiva","Approximately 1500–1200 BC; a dancing figure identified with Nataraja","Approximately 2500–2400 BC; a seated figure identified with Brahma",1),
+]},
+];
+
+const STORAGE_KEY='SharadaPeethUnseenPool';
+const pastelColors=[
+{bg:"#F3E8FF",border:"#D8B4FE",accent:"#A855F7"},
+{bg:"#DBEAFE",border:"#93C5FD",accent:"#3B82F6"},
+{bg:"#D1FAE5",border:"#6EE7B7",accent:"#10B981"},
+{bg:"#FEF3C7",border:"#FCD34D",accent:"#F59E0B"},
+{bg:"#FCE7F3",border:"#F9A8D4",accent:"#EC4899"},
+{bg:"#E0E7FF",border:"#A5B4FC",accent:"#6366F1"},
+{bg:"#CCFBF1",border:"#5EEAD4",accent:"#14B8A6"},
+{bg:"#FFF7ED",border:"#FDBA74",accent:"#F97316"},
+];
+const getColor=i=>pastelColors[i%pastelColors.length];
+const optLabels=["A","B","C","D"];
+
+function loadPool(){
+  try{
+    const saved=JSON.parse(localStorage.getItem(STORAGE_KEY));
+    return saved?.length>0?saved:ALL_TOPICS;
+  }catch{return ALL_TOPICS}
+}
+function savePool(pool){
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(pool));
+}
+
+function App(){
+  const[screen,setScreen]=useState("home");
+  const[topicIdx,setTopicIdx]=useState(0);
+  const[qIdx,setQIdx]=useState(0);
+  const[score,setScore]=useState(0);
+  const[selected,setSelected]=useState(null);
+  const[answered,setAnswered]=useState(false);
+  const[results,setResults]=useState([]);
+  const[unseenPool,setUnseenPool]=useState(()=>loadPool());
+
+  const topic=ALL_TOPICS[topicIdx];
+  const question=topic?.qs[qIdx];
+  const totalQ=topic?.qs.length||0;
+
+  const unseenNames=new Set(unseenPool.map(t=>t.n));
+  const isSeen=i=>!unseenNames.has(ALL_TOPICS[i].n);
+
+  const startTopic=useCallback(i=>{
+    setTopicIdx(i);setQIdx(0);setScore(0);setSelected(null);setAnswered(false);setResults([]);setScreen("quiz");
+  },[]);
+
+  const markTopicDone=useCallback((idx)=>{
+    setUnseenPool(prev=>{
+      const topicName=ALL_TOPICS[idx].n;
+      let next=prev.filter(t=>t.n!==topicName);
+      if(next.length===0)next=[...ALL_TOPICS];
+      savePool(next);
+      return next;
+    });
+  },[]);
+
+  const handleSelect=useCallback(i=>{
+    if(answered)return;
+    setSelected(i);setAnswered(true);
+    const correct=i===question.a;
+    setScore(s=>s+(correct?3:-1));
+    setResults(r=>[...r,{correct,selected:i,answer:question.a}]);
+  },[answered,question]);
+
+  const nextQ=useCallback(()=>{
+    if(qIdx+1>=totalQ){markTopicDone(topicIdx);setScreen("results")}
+    else{setQIdx(q=>q+1);setSelected(null);setAnswered(false)}
+  },[qIdx,totalQ,topicIdx,markTopicDone]);
+
+  const endQuiz=useCallback(()=>{markTopicDone(topicIdx);setScreen("results")},[topicIdx,markTopicDone]);
+  const goHome=useCallback(()=>setScreen("home"),[]);
+  const retry=useCallback(()=>startTopic(topicIdx),[startTopic,topicIdx]);
+
+  const resetMemory=useCallback(()=>{
+    localStorage.removeItem(STORAGE_KEY);
+    setUnseenPool([...ALL_TOPICS]);
+  },[]);
+
+  const maxScore=totalQ*3;
+  const correctCount=results.filter(r=>r.correct).length;
+  const wrongCount=results.filter(r=>!r.correct).length;
+  const accuracy=results.length>0?Math.round((correctCount/results.length)*100):0;
+  const completedCount=ALL_TOPICS.length-unseenPool.length;
+
+  if(screen==="home"){
+    return(
+      <div style={{minHeight:"100vh",background:"linear-gradient(135deg,#FAF5FF 0%,#EFF6FF 50%,#ECFDF5 100%)",fontFamily:"'Segoe UI',system-ui,-apple-system,sans-serif"}}>
+        <div style={{maxWidth:960,margin:"0 auto",padding:"32px 16px"}}>
+          <div style={{textAlign:"center",marginBottom:40}}>
+            <div style={{display:"inline-flex",alignItems:"center",gap:12,marginBottom:8}}>
+              <div style={{width:44,height:44,borderRadius:12,background:"linear-gradient(135deg,#A855F7,#6366F1)",display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontSize:22,fontWeight:700}}>श</div>
+              <h1 style={{fontSize:"clamp(24px,5vw,32px)",fontWeight:700,color:"#1E1B4B",margin:0,letterSpacing:"-0.5px"}}>Sharada Peeth</h1>
+              <button onClick={resetMemory} title="Reset all progress" style={{
+                width:32,height:32,borderRadius:8,border:"1.5px solid #D1D5DB",background:"#fff",
+                cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",
+                fontSize:16,color:"#6B7280",transition:"all 0.2s",flexShrink:0
+              }}
+              onMouseEnter={e=>{e.currentTarget.style.background="#F3F4F6";e.currentTarget.style.borderColor="#9CA3AF";e.currentTarget.style.color="#374151"}}
+              onMouseLeave={e=>{e.currentTarget.style.background="#fff";e.currentTarget.style.borderColor="#D1D5DB";e.currentTarget.style.color="#6B7280"}}
+              >↻</button>
+            </div>
+            <p style={{color:"#6B7280",fontSize:15,margin:0,letterSpacing:"0.5px"}}>Interactive Sanatani learning quiz</p>
+            <div style={{marginTop:16,display:"inline-block",background:"#fff",borderRadius:20,padding:"6px 18px",fontSize:13,color:"#6366F1",fontWeight:600,boxShadow:"0 1px 3px rgba(0,0,0,0.06)"}}>
+              {ALL_TOPICS.length} topics · {ALL_TOPICS.reduce((s,t)=>s+t.qs.length,0)} questions
+              {completedCount>0&&<span style={{color:"#059669"}}> · {completedCount} done</span>}
+            </div>
+            <div style={{marginTop:10}}>
+              <a href="https://docs.google.com/document/d/1fhH3T_Zmrhae5LicTuiapbN8VRIOJwdHz05rRhbWGUo/edit?usp=sharing" target="_blank" rel="noopener noreferrer" style={{fontSize:13,fontWeight:700,color:"#6366F1",letterSpacing:"1.5px",textDecoration:"none",borderBottom:"1.5px solid #A5B4FC",paddingBottom:1}}>STUDY GUIDE</a>
+            </div>
+          </div>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(min(280px,100%),1fr))",gap:14}}>
+            {ALL_TOPICS.map((t,i)=>{
+              const c=getColor(i);
+              const done=isSeen(i);
+              return(
+                <button key={i} onClick={()=>startTopic(i)} style={{
+                  textAlign:"left",padding:"18px 20px",borderRadius:14,border:`1.5px solid ${done?"#E5E7EB":c.border}`,
+                  background:done?"#F9FAFB":"#fff",cursor:"pointer",transition:"all 0.2s",
+                  boxShadow:"0 1px 4px rgba(0,0,0,0.04)",opacity:done?0.55:1,position:"relative",
+                }}
+                onMouseEnter={e=>{e.currentTarget.style.background=done?"#F3F4F6":c.bg;e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.boxShadow="0 4px 12px rgba(0,0,0,0.08)";e.currentTarget.style.opacity="1"}}
+                onMouseLeave={e=>{e.currentTarget.style.background=done?"#F9FAFB":"#fff";e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.boxShadow="0 1px 4px rgba(0,0,0,0.04)";e.currentTarget.style.opacity=done?"0.55":"1"}}
+                >
+                  <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:20}}>
+                    <span style={{fontSize:14,fontWeight:600,color:done?"#9CA3AF":"#1F2937",lineHeight:1.4}}>{t.n}</span>
+                    <div style={{display:"flex",alignItems:"center",gap:6,flexShrink:0}}>
+                      {done&&<span style={{fontSize:14}}>✓</span>}
+                      <span style={{background:done?"#F3F4F6":c.bg,color:done?"#9CA3AF":c.accent,fontSize:12,fontWeight:700,borderRadius:8,padding:"3px 9px",border:`1px solid ${done?"#E5E7EB":c.border}`}}>
+                        {t.qs.length}
+                      </span>
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if(screen==="quiz"){
+    const c=getColor(topicIdx);
+    const progress=(qIdx/totalQ)*100;
+    return(
+      <div style={{minHeight:"100vh",background:"linear-gradient(135deg,#FAF5FF 0%,#EFF6FF 50%,#ECFDF5 100%)",fontFamily:"'Segoe UI',system-ui,-apple-system,sans-serif"}}>
+        <div style={{maxWidth:720,margin:"0 auto",padding:"28px 16px"}}>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}>
+            <button onClick={goHome} style={{background:"none",border:"none",color:"#6B7280",cursor:"pointer",fontSize:14,padding:"6px 0",display:"flex",alignItems:"center",gap:6}}>← Topics</button>
+            <button onClick={endQuiz} style={{background:"#FEE2E2",color:"#DC2626",border:"1px solid #FECACA",borderRadius:10,padding:"7px 16px",cursor:"pointer",fontSize:13,fontWeight:600}}>End quiz</button>
+          </div>
+          <div style={{background:"#fff",borderRadius:18,padding:"clamp(18px,4vw,28px)",boxShadow:"0 2px 12px rgba(0,0,0,0.06)",border:`1.5px solid ${c.border}`}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16,gap:8}}>
+              <span style={{fontSize:13,color:c.accent,fontWeight:700,background:c.bg,padding:"4px 12px",borderRadius:8,minWidth:0,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{topic.n}</span>
+              <div style={{display:"flex",gap:12,alignItems:"center",flexShrink:0}}>
+                <span style={{fontSize:13,color:"#6B7280",fontWeight:500}}>{qIdx+1} / {totalQ}</span>
+                <span style={{fontSize:13,fontWeight:700,color:score>=0?"#059669":"#DC2626",background:score>=0?"#D1FAE5":"#FEE2E2",padding:"4px 10px",borderRadius:8}}>{score>=0?"+":""}{score}</span>
+              </div>
+            </div>
+            <div style={{height:4,background:"#F3F4F6",borderRadius:4,marginBottom:24,overflow:"hidden"}}>
+              <div style={{height:"100%",width:`${progress}%`,background:`linear-gradient(90deg,${c.accent},${c.border})`,borderRadius:4,transition:"width 0.4s ease"}}/>
+            </div>
+            <p style={{fontSize:"clamp(14px,3.5vw,16px)",fontWeight:600,color:"#1F2937",lineHeight:1.55,margin:"0 0 24px 0"}}>{question.q}</p>
+            <div style={{display:"flex",flexDirection:"column",gap:10}}>
+              {question.o.map((opt,i)=>{
+                const isSelected=selected===i;const isCorrect=i===question.a;
+                let bg="#FAFAFA",border="#E5E7EB",color="#374151",labelBg="#F3F4F6",labelColor="#6B7280";
+                if(answered){
+                  if(isCorrect){bg="#D1FAE5";border="#6EE7B7";color="#065F46";labelBg="#059669";labelColor="#fff"}
+                  else if(isSelected&&!isCorrect){bg="#FEE2E2";border="#FCA5A5";color="#991B1B";labelBg="#DC2626";labelColor="#fff"}
+                  else{bg="#F9FAFB";border="#E5E7EB";color="#9CA3AF"}
+                }
+                return(
+                  <button key={i} onClick={()=>handleSelect(i)} disabled={answered} style={{
+                    display:"flex",alignItems:"center",gap:12,padding:"14px 16px",borderRadius:12,
+                    border:`1.5px solid ${border}`,background:bg,cursor:answered?"default":"pointer",
+                    textAlign:"left",transition:"all 0.2s",color
+                  }}
+                  onMouseEnter={e=>{if(!answered){e.currentTarget.style.background=c.bg;e.currentTarget.style.borderColor=c.border}}}
+                  onMouseLeave={e=>{if(!answered){e.currentTarget.style.background="#FAFAFA";e.currentTarget.style.borderColor="#E5E7EB"}}}
+                  >
+                    <span style={{flexShrink:0,width:28,height:28,borderRadius:8,background:labelBg,color:labelColor,display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,fontWeight:700}}>
+                      {answered&&isCorrect?"✓":answered&&isSelected&&!isCorrect?"✗":optLabels[i]}
+                    </span>
+                    <span style={{fontSize:"clamp(13px,3vw,14px)",lineHeight:1.5}}>{opt}</span>
+                  </button>
+                );
+              })}
+            </div>
+            {answered&&(
+              <div style={{marginTop:20,display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:12}}>
+                <span style={{fontSize:14,fontWeight:600,color:selected===question.a?"#059669":"#DC2626"}}>{selected===question.a?"✓ Correct":"✗ Wrong"}</span>
+                <button onClick={nextQ} style={{
+                  background:`linear-gradient(135deg,${c.accent},${c.border})`,color:"#fff",
+                  border:"none",borderRadius:10,padding:"10px 24px",cursor:"pointer",
+                  fontSize:14,fontWeight:600,boxShadow:"0 2px 8px rgba(0,0,0,0.1)"
+                }}>{qIdx+1>=totalQ?"See results":"Next →"}</button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if(screen==="results"){
+    const c=getColor(topicIdx);
+    const pct=maxScore>0?Math.round((Math.max(0,score)/maxScore)*100):0;
+    let emoji="🏆",msg="Perfect score";
+    if(pct<100&&pct>=70){emoji="🌟";msg="Excellent work"}
+    else if(pct<70&&pct>=40){emoji="📖";msg="Good effort — review and retry"}
+    else if(pct<40){emoji="🔄";msg="Keep learning — try again"}
+    return(
+      <div style={{minHeight:"100vh",background:"linear-gradient(135deg,#FAF5FF 0%,#EFF6FF 50%,#ECFDF5 100%)",fontFamily:"'Segoe UI',system-ui,-apple-system,sans-serif"}}>
+        <div style={{maxWidth:520,margin:"0 auto",padding:"40px 16px"}}>
+          <div style={{background:"#fff",borderRadius:20,padding:"clamp(24px,5vw,36px) clamp(20px,4vw,32px)",boxShadow:"0 4px 20px rgba(0,0,0,0.07)",border:`1.5px solid ${c.border}`,textAlign:"center"}}>
+            <div style={{fontSize:56,marginBottom:8}}>{emoji}</div>
+            <h2 style={{fontSize:"clamp(18px,4vw,22px)",fontWeight:700,color:"#1F2937",margin:"0 0 4px 0"}}>{msg}</h2>
+            <p style={{fontSize:13,color:c.accent,fontWeight:600,margin:"0 0 28px 0",background:c.bg,display:"inline-block",padding:"4px 14px",borderRadius:8}}>{topic.n}</p>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:12,marginBottom:28}}>
+              <div style={{background:"#F0FDF4",borderRadius:14,padding:"16px 8px"}}>
+                <div style={{fontSize:28,fontWeight:700,color:"#059669"}}>{correctCount}</div>
+                <div style={{fontSize:12,color:"#6B7280",marginTop:2}}>Correct</div>
+              </div>
+              <div style={{background:"#FEF2F2",borderRadius:14,padding:"16px 8px"}}>
+                <div style={{fontSize:28,fontWeight:700,color:"#DC2626"}}>{wrongCount}</div>
+                <div style={{fontSize:12,color:"#6B7280",marginTop:2}}>Wrong</div>
+              </div>
+              <div style={{background:c.bg,borderRadius:14,padding:"16px 8px"}}>
+                <div style={{fontSize:28,fontWeight:700,color:c.accent}}>{totalQ-results.length}</div>
+                <div style={{fontSize:12,color:"#6B7280",marginTop:2}}>Skipped</div>
+              </div>
+            </div>
+            <div style={{background:"#F9FAFB",borderRadius:14,padding:"20px",marginBottom:28}}>
+              <div style={{display:"flex",justifyContent:"space-between",marginBottom:10}}>
+                <span style={{fontSize:14,color:"#6B7280"}}>Total score</span>
+                <span style={{fontSize:18,fontWeight:700,color:score>=0?"#059669":"#DC2626"}}>{score} / {maxScore}</span>
+              </div>
+              <div style={{height:8,background:"#E5E7EB",borderRadius:6,overflow:"hidden"}}>
+                <div style={{height:"100%",width:`${pct}%`,background:`linear-gradient(90deg,${c.accent},${c.border})`,borderRadius:6,transition:"width 0.6s ease"}}/>
+              </div>
+              <div style={{display:"flex",justifyContent:"space-between",marginTop:8}}>
+                <span style={{fontSize:12,color:"#9CA3AF"}}>Accuracy: {accuracy}%</span>
+                <span style={{fontSize:12,color:"#9CA3AF"}}>{pct}%</span>
+              </div>
+            </div>
+            <div style={{display:"flex",gap:10}}>
+              <button onClick={retry} style={{flex:1,padding:"12px",borderRadius:12,border:`1.5px solid ${c.border}`,background:c.bg,color:c.accent,fontSize:14,fontWeight:600,cursor:"pointer"}}>↻ Retry topic</button>
+              <button onClick={goHome} style={{flex:1,padding:"12px",borderRadius:12,border:"none",background:`linear-gradient(135deg,${c.accent},${c.border})`,color:"#fff",fontSize:14,fontWeight:600,cursor:"pointer",boxShadow:"0 2px 8px rgba(0,0,0,0.1)"}}>All topics</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  return null;
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>
