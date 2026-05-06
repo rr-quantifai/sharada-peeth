@@ -17,6 +17,7 @@ button{font-family:inherit}
 .sg table{border-collapse:collapse;width:100%;margin:0.8em 0}
 .sg th,.sg td{border:1px solid #ddd;padding:8px 12px;text-align:left}
 .sg th{background:#f9f9f9}
+@keyframes pulse{0%,100%{opacity:0.2;transform:scale(0.8)}50%{opacity:1;transform:scale(1)}}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
@@ -810,7 +811,13 @@ function App(){
             </div>
           </div>
           <div style={{fontSize:16,lineHeight:1.8,color:"#374151",textAlign:"justify",paddingBottom:64}}>
-            {sgLoading&&<p style={{color:"#6B7280",textAlign:"center",marginTop:60}}>Loading...</p>}
+            {sgLoading&&<div style={{minHeight:"100vh",background:"linear-gradient(135deg,#FAF5FF 0%,#EFF6FF 50%,#ECFDF5 100%)",display:"flex",alignItems:"center",justifyContent:"center",position:"fixed",top:0,left:0,right:0,bottom:0}}>
+  <div style={{display:"flex",gap:10,alignItems:"center"}}>
+    <div style={{width:10,height:10,borderRadius:"50%",background:"#A855F7",animation:"pulse 1.2s ease-in-out infinite"}}/>
+    <div style={{width:10,height:10,borderRadius:"50%",background:"#A855F7",animation:"pulse 1.2s ease-in-out infinite",animationDelay:"0.2s"}}/>
+    <div style={{width:10,height:10,borderRadius:"50%",background:"#A855F7",animation:"pulse 1.2s ease-in-out infinite",animationDelay:"0.4s"}}/>
+  </div>
+</div>}
             {sgError&&<p style={{color:"#DC2626",textAlign:"center",marginTop:60}}>Error: {sgError}<br/><small>Check that STUDY_GUIDE_URL is set to a valid public raw file URL.</small></p>}
             {sgContent&&<div className="sg" dangerouslySetInnerHTML={{__html:marked.parse(sgContent)}}/>}
           </div>
